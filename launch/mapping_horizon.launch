@@ -1,0 +1,25 @@
+<launch>
+<!-- Launch file for Livox Horizon LiDAR -->
+
+	<arg name="rviz" default="true" />
+
+	<node pkg="point_lio" type="pointlio_mapping" name="laserMapping" output="screen">
+	<rosparam command="load" file="$(find point_lio)/config/horizon.yaml" />
+	<param name="use_imu_as_input" type="bool" value="0"/> <!--change to 1 to use IMU as input of Point-LIO-->
+	<param name="prop_at_freq_of_imu" type="bool" value="1"/>
+	<param name="check_satu" type="bool" value="1"/>
+	<param name="init_map_size" type="int" value="10"/>
+	<param name="point_filter_num" type="int" value="3"/> <!--1, 3--> 
+	<param name="space_down_sample" type="bool" value="1" />  
+	<param name="filter_size_surf" type="double" value="0.5" /> <!--0.5, 0.3, 0.2, 0.15, 0.1--> 
+	<param name="filter_size_map" type="double" value="0.5" /> <!--0.5, 0.3, 0.15, 0.1-->
+	<param name="cube_side_length" type="double" value="1000" /> <!--1000-->
+	<param name="runtime_pos_log_enable" type="bool" value="0" /> <!--1-->
+	</node>
+	<group if="$(arg rviz)">
+	<node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz" args="-d $(find point_lio)/rviz_cfg/loam_livox.rviz" />
+	</group>
+
+	launch-prefix="gdb -ex run --args"
+
+</launch>

@@ -1,0 +1,8 @@
+[submodule "ikd-Tree"]
+	path = ikd-Tree
+	url = https://github.com/hku-mars/ikd-Tree.git
+	branch = fast_lio
+[submodule "include/IKFoM"]
+	path = include/IKFoM
+	url = https://github.com/hku-mars/IKFoM.git
+	branch = toolkit
