@@ -33,7 +33,7 @@ mapping:
     match_s: 81
     fov_degree: 100 
     det_range: 260.0
-    gravity: [0.0, 0.0, -9.810] 
+    gravity: [0.0, 0.0, -9.810] # preknown gravity, use when imu_en is false or start from a non-stationary state
     extrinsic_T: [ 0.05512, 0.02226, -0.0297 ] 
     extrinsic_R: [ 1, 0, 0,
                    0, 1, 0,
