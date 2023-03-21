@@ -5,7 +5,7 @@
 
 <div align="center">
     <div align="center">
-        <img src="https://github.com/hku-mars/Point-LIO/tree/master/image/toc4.png" width = 75% >
+        <img src="https://github.com/hku-mars/Point-LIO/raw/master/image/toc4.png" width = 75% >
     </div>
     <font color=#a0a0a0 size=2>The framework and key points of the Point-LIO.</font>
 </div>
@@ -24,7 +24,7 @@ Our paper is accepted to Advanced Intelligent Systems(AIS), and is in the proces
 ## **1.3. Related video**
 Our accompany video is available on **YouTube**.
 <div align="center">
-    <a href="https://youtu.be/oS83xUs42Uw" target="_blank"><img src="https://github.com/hku-mars/Point-LIO/tree/master/image/final.png" width=60% /></a>
+    <a href="https://youtu.be/oS83xUs42Uw" target="_blank"><img src="https://github.com/hku-mars/Point-LIO/raw/master/image/final.png" width=60% /></a>
 </div>
 
 ## 2. What can Point-LIO do?
@@ -148,14 +148,14 @@ Set ``` pcd_save_enable ``` in launchfile to ``` 1 ```. All the scans (in global
 
 ## **6.1. Example-1: SLAM on datasets with aggressive motions where IMU is saturated**
 <div align="center">
-<img src="https://github.com/hku-mars/Point-LIO/tree/master/image/example1.gif"  width="48%" />
-<img src="https://github.com/hku-mars/Point-LIO/tree/master/image/example2.gif"  width="48%" />
+<img src="https://github.com/hku-mars/Point-LIO/raw/master/image/example1.gif"  width="40%" />
+<img src="https://github.com/hku-mars/Point-LIO/raw/master/image/example2.gif"  width="54%" />
 </div>
 
 ## **6.2. Example-2: Application on FPV and PULSAR**
 <div align="center">
-<img src="https://github.com/hku-mars/Point-LIO/tree/master/image/example3.gif"  width="48%" />
-<img src="https://github.com/hku-mars/Point-LIO/tree/master/image/example4.gif"  width="48%" />
+<img src="https://github.com/hku-mars/Point-LIO/raw/master/image/example3.gif"  width="58%" />
+<img src="https://github.com/hku-mars/Point-LIO/raw/master/image/example4.gif"  width="35%" />
 </div>
 
 PULSAR is a self-rotating actuated by only one motor, [PULSAR](https://github.com/hku-mars/PULSAR)
