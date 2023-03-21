@@ -63,7 +63,6 @@ deque<sensor_msgs::Imu::ConstPtr> imu_deque;
 PointCloudXYZI::Ptr feats_undistort(new PointCloudXYZI());
 PointCloudXYZI::Ptr feats_down_body_space(new PointCloudXYZI());
 PointCloudXYZI::Ptr init_feats_world(new PointCloudXYZI());
-std::vector<Eigen::Vector3d> pv_list;
 
 pcl::VoxelGrid<PointType> downSizeFilterSurf;
 pcl::VoxelGrid<PointType> downSizeFilterMap;
@@ -76,7 +75,6 @@ sensor_msgs::Imu imu_last, imu_next;
 sensor_msgs::Imu::ConstPtr imu_last_ptr;
 nav_msgs::Path path;
 nav_msgs::Odometry odomAftMapped;
-geometry_msgs::Quaternion geoQuat;
 geometry_msgs::PoseStamped msg_body_pose;
 
 void SigHandle(int sig)
@@ -673,24 +671,35 @@ void set_posestamp(T & out)
         out.position.x = kf_output.x_.pos(0);
         out.position.y = kf_output.x_.pos(1);
         out.position.z = kf_output.x_.pos(2);
+        out.orientation.x = kf_output.x_.rot.coeffs()[0];
+        out.orientation.y = kf_output.x_.rot.coeffs()[1];
+        out.orientation.z = kf_output.x_.rot.coeffs()[2];
+        out.orientation.w = kf_output.x_.rot.coeffs()[3];
     }
     else
     {
         out.position.x = kf_input.x_.pos(0);
         out.position.y = kf_input.x_.pos(1);
         out.position.z = kf_input.x_.pos(2);
+        out.orientation.x = kf_input.x_.rot.coeffs()[0];
+        out.orientation.y = kf_input.x_.rot.coeffs()[1];
+        out.orientation.z = kf_input.x_.rot.coeffs()[2];
+        out.orientation.w = kf_input.x_.rot.coeffs()[3];
     }
-    out.orientation.x = geoQuat.x;
-    out.orientation.y = geoQuat.y;
-    out.orientation.z = geoQuat.z;
-    out.orientation.w = geoQuat.w;
 }
 
 void publish_odometry(const ros::Publisher & pubOdomAftMapped)
 {
     odomAftMapped.header.frame_id = "camera_init";
     odomAftMapped.child_frame_id = "aft_mapped";
-    odomAftMapped.header.stamp = ros::Time().fromSec(lidar_end_time);
+    if (publish_odometry_without_downsample)
+    {
+        odomAftMapped.header.stamp = ros::Time().fromSec(time_current);
+    }
+    else
+    {
+        odomAftMapped.header.stamp = ros::Time().fromSec(lidar_end_time);
+    }
     set_posestamp(odomAftMapped.pose.pose);
     
     pubOdomAftMapped.publish(odomAftMapped);
@@ -1073,6 +1082,18 @@ int main(int argc, char** argv)
 
                     solve_start = omp_get_wtime();
                         
+                    if (publish_odometry_without_downsample)
+                    {
+                        /******* Publish odometry *******/
+
+                        publish_odometry(pubOdomAftMapped);
+                        if (runtime_pos_log)
+                        {
+                            fout_out << setw(20) << Measures.lidar_beg_time - first_lidar_time << " " << euler_cur.transpose()*57.3 << " " << state_out.pos.transpose() << " " << state_out.vel.transpose() \
+                            <<" "<<state_out.omg.transpose()<<" "<<state_out.acc.transpose()<<" "<<state_out.gravity.transpose()<<" "<<state_out.bg.transpose()<<" "<<state_out.ba.transpose()<<" "<<feats_undistort->points.size()<<endl;
+                        }
+                    }
+
                     for (int j = 0; j < time_seq[k]; j++)
                     {
                         PointType &point_body_j  = feats_down_body->points[idx+j+1];
@@ -1219,6 +1240,17 @@ int main(int argc, char** argv)
                     //         imu_prop_cov = false;
                     //     }
                     // }
+                    if (publish_odometry_without_downsample)
+                    {
+                        /******* Publish odometry *******/
+
+                        publish_odometry(pubOdomAftMapped);
+                        if (runtime_pos_log)
+                        {
+                            fout_out << setw(20) << Measures.lidar_beg_time - first_lidar_time << " " << euler_cur.transpose()*57.3 << " " << state_in.pos.transpose() << " " << state_in.vel.transpose() \
+                            <<" "<<state_in.bg.transpose()<<" "<<state_in.ba.transpose()<<" "<<state_in.gravity.transpose()<<" "<<feats_undistort->points.size()<<endl;
+                        }
+                    }
 
                     for (int j = 0; j < time_seq[k]; j++)
                     {
@@ -1233,28 +1265,11 @@ int main(int argc, char** argv)
                 }  
             }
 
-            if (!use_imu_as_input)
+            /******* Publish odometry downsample *******/
+            if (!publish_odometry_without_downsample)
             {
-                state_out = kf_output.get_x();
-                euler_cur = SO3ToEuler(state_out.rot);
-                geoQuat.x = state_out.rot.coeffs()[0];
-                geoQuat.y = state_out.rot.coeffs()[1];
-                geoQuat.z = state_out.rot.coeffs()[2];
-                geoQuat.w = state_out.rot.coeffs()[3];
+                publish_odometry(pubOdomAftMapped);
             }
-            else
-            {
-                state_in = kf_input.get_x();
-                euler_cur = SO3ToEuler(state_in.rot);
-                geoQuat.x = state_in.rot.coeffs()[0];
-                geoQuat.y = state_in.rot.coeffs()[1];
-                geoQuat.z = state_in.rot.coeffs()[2];
-                geoQuat.w = state_in.rot.coeffs()[3];
-            }
-
-            /******* Publish odometry *******/
-
-            publish_odometry(pubOdomAftMapped);
 
             /*** add the feature points to map kdtree ***/
             t3 = omp_get_wtime();
@@ -1285,16 +1300,18 @@ int main(int argc, char** argv)
                 s_plot3[time_log_counter] = aver_time_consu;
                 time_log_counter ++;
                 printf("[ mapping ]: time: IMU + Map + Input Downsample: %0.6f ave match: %0.6f ave solve: %0.6f  ave ICP: %0.6f  map incre: %0.6f ave total: %0.6f icp: %0.6f propogate: %0.6f \n",t1-t0,aver_time_match,aver_time_solve,t3-t1,t5-t3,aver_time_consu, aver_time_icp, aver_time_propag); 
-                
-                if (!use_imu_as_input)
+                if (!publish_odometry_without_downsample)
                 {
-                    fout_out << setw(20) << Measures.lidar_beg_time - first_lidar_time << " " << euler_cur.transpose()*57.3 << " " << state_out.pos.transpose() << " " << state_out.vel.transpose() \
-                    <<" "<<state_out.omg.transpose()<<" "<<state_out.acc.transpose()<<" "<<state_out.gravity.transpose()<<" "<<state_out.bg.transpose()<<" "<<state_out.ba.transpose()<<" "<<feats_undistort->points.size()<<endl;
-                }
-                else
-                {
-                    fout_out << setw(20) << Measures.lidar_beg_time - first_lidar_time << " " << euler_cur.transpose()*57.3 << " " << state_in.pos.transpose() << " " << state_in.vel.transpose() \
-                    <<" "<<state_in.bg.transpose()<<" "<<state_in.ba.transpose()<<" "<<state_in.gravity.transpose()<<" "<<feats_undistort->points.size()<<endl;
+                    if (!use_imu_as_input)
+                    {
+                        fout_out << setw(20) << Measures.lidar_beg_time - first_lidar_time << " " << euler_cur.transpose()*57.3 << " " << state_out.pos.transpose() << " " << state_out.vel.transpose() \
+                        <<" "<<state_out.omg.transpose()<<" "<<state_out.acc.transpose()<<" "<<state_out.gravity.transpose()<<" "<<state_out.bg.transpose()<<" "<<state_out.ba.transpose()<<" "<<feats_undistort->points.size()<<endl;
+                    }
+                    else
+                    {
+                        fout_out << setw(20) << Measures.lidar_beg_time - first_lidar_time << " " << euler_cur.transpose()*57.3 << " " << state_in.pos.transpose() << " " << state_in.vel.transpose() \
+                        <<" "<<state_in.bg.transpose()<<" "<<state_in.ba.transpose()<<" "<<state_in.gravity.transpose()<<" "<<feats_undistort->points.size()<<endl;
+                    }
                 }
                 dump_lio_state_to_log(fp);
             }

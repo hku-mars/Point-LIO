@@ -15,7 +15,7 @@ extern int pcd_index;
 extern std::string lid_topic, imu_topic;
 extern bool prop_at_freq_of_imu, check_satu, con_frame, cut_frame;
 extern bool use_imu_as_input, space_down_sample;
-extern bool extrinsic_est_en;
+extern bool extrinsic_est_en, publish_odometry_without_downsample;
 extern int  init_map_size, con_frame_num;
 extern double match_s, satu_acc, satu_gyro, cut_frame_time_interval;
 extern float  plane_thr;

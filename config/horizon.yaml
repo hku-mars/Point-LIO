@@ -38,7 +38,10 @@ mapping:
     extrinsic_R: [ 1, 0, 0,
                    0, 1, 0,
                    0, 0, 1 ]
-   
+
+odometry: 
+    publish_odometry_without_downsample: false
+
 publish:
     path_en: true                 # false: close the path output
     scan_publish_en: true         # false: close all the point cloud output
