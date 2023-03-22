@@ -82,7 +82,7 @@ C. We recommend to set the **extrinsic_est_en** to false if the extrinsic is giv
 
 D. If a high odometry output frequency without downsample is required, set ``` publish_odometry_without_downsample ``` as true. Then the warning message of tf "TF_REPEATED_DATA" will pop up in the terminal window, because the time interval between two publish odometery is too small. The following command could be used to suppress this warning to a smaller frequency:
 
-in the src folder of the Point-LIO,
+in your catkin_ws/src,
 
 git clone --branch throttle-tf-repeated-data-error git@github.com:BadgerTechnologies/geometry2.git
 
