@@ -82,6 +82,8 @@ C. We recommend to set the **extrinsic_est_en** to false if the extrinsic is giv
 
 D. If a high odometry output frequency without downsample is required, set ``` publish_odometry_without_downsample ``` as true. Then the warning message of tf "TF_REPEATED_DATA" will pop up in the terminal window, because the time interval between two publish odometery is too small. The following command could be used to suppress this warning to a smaller frequency:
 
+in the src folder of the Point-LIO,
+
 git clone --branch throttle-tf-repeated-data-error git@github.com:BadgerTechnologies/geometry2.git
 
 Then rebuild, source setup.bash, run and then it should be reduced down to once every 10 seconds. If 10 seconds is still too much log output then change the ros::Duration(10.0) to 10000 seconds or whatever you like.
@@ -131,7 +133,7 @@ Step B: Run below
 ```
     cd ~/$Point_LIO_ROS_DIR$
     source devel/setup.bash
-    roslaunch point_lio mapping_velodyne.launch
+    roslaunch point_lio mapping_velody16.launch
 ```
 
 Step C: Run LiDAR's ros driver or play rosbag.
