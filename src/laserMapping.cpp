@@ -165,11 +165,11 @@ void lasermap_fov_segment()
     V3D pos_LiD;
     if (use_imu_as_input)
     {
-        pos_LiD = state_in.pos + state_in.rot * Lidar_T_wrt_IMU;
+        pos_LiD = kf_input.x_.pos + kf_input.x_.rot * Lidar_T_wrt_IMU;
     }
     else
     {
-        pos_LiD = state_out.pos + state_out.rot * Lidar_T_wrt_IMU;
+        pos_LiD = kf_output.x_.pos + kf_output.x_.rot * Lidar_T_wrt_IMU;
     }
     if (!Localmap_Initialized){
         for (int i = 0; i < 3; i++){
@@ -1089,6 +1089,8 @@ int main(int argc, char** argv)
                         publish_odometry(pubOdomAftMapped);
                         if (runtime_pos_log)
                         {
+                            state_out = kf_output.x_;
+                            euler_cur = SO3ToEuler(state_out.rot);
                             fout_out << setw(20) << Measures.lidar_beg_time - first_lidar_time << " " << euler_cur.transpose()*57.3 << " " << state_out.pos.transpose() << " " << state_out.vel.transpose() \
                             <<" "<<state_out.omg.transpose()<<" "<<state_out.acc.transpose()<<" "<<state_out.gravity.transpose()<<" "<<state_out.bg.transpose()<<" "<<state_out.ba.transpose()<<" "<<feats_undistort->points.size()<<endl;
                         }
@@ -1247,6 +1249,8 @@ int main(int argc, char** argv)
                         publish_odometry(pubOdomAftMapped);
                         if (runtime_pos_log)
                         {
+                            state_in = kf_input.x_;
+                            euler_cur = SO3ToEuler(state_in.rot);
                             fout_out << setw(20) << Measures.lidar_beg_time - first_lidar_time << " " << euler_cur.transpose()*57.3 << " " << state_in.pos.transpose() << " " << state_in.vel.transpose() \
                             <<" "<<state_in.bg.transpose()<<" "<<state_in.ba.transpose()<<" "<<state_in.gravity.transpose()<<" "<<feats_undistort->points.size()<<endl;
                         }
@@ -1304,11 +1308,15 @@ int main(int argc, char** argv)
                 {
                     if (!use_imu_as_input)
                     {
+                        state_out = kf_output.x_;
+                        euler_cur = SO3ToEuler(state_out.rot);
                         fout_out << setw(20) << Measures.lidar_beg_time - first_lidar_time << " " << euler_cur.transpose()*57.3 << " " << state_out.pos.transpose() << " " << state_out.vel.transpose() \
                         <<" "<<state_out.omg.transpose()<<" "<<state_out.acc.transpose()<<" "<<state_out.gravity.transpose()<<" "<<state_out.bg.transpose()<<" "<<state_out.ba.transpose()<<" "<<feats_undistort->points.size()<<endl;
                     }
                     else
                     {
+                        state_in = kf_input.x_;
+                        euler_cur = SO3ToEuler(state_in.rot);
                         fout_out << setw(20) << Measures.lidar_beg_time - first_lidar_time << " " << euler_cur.transpose()*57.3 << " " << state_in.pos.transpose() << " " << state_in.vel.transpose() \
                         <<" "<<state_in.bg.transpose()<<" "<<state_in.ba.transpose()<<" "<<state_in.gravity.transpose()<<" "<<feats_undistort->points.size()<<endl;
                     }
