@@ -731,7 +731,35 @@ void publish_path(const ros::Publisher pubPath)
         path.poses.emplace_back(msg_body_pose);
         pubPath.publish(path);
     }
-}        
+}
+
+/*
+* @brief : Save the whole trajectory to a txt file (TUM format)
+*/
+void save_trajectory(const std::string &traj_file) {
+    std::string filename(traj_file);
+    std::fstream output_fstream;
+
+    output_fstream.open(filename, std::ios_base::out);
+
+    if (!output_fstream.is_open()) {
+        std::cerr << "Failed to open " << filename << '\n';
+    }
+
+    else {
+        output_fstream << "#timestamp x y z q_x q_y q_z q_w" << std::endl;
+        for (const auto &p : path.poses) {
+            output_fstream << std::setprecision(15) << p.header.stamp.toSec() << " "
+                           << p.pose.position.x << " "
+                           << p.pose.position.y << " "
+                           << p.pose.position.z << " "
+                           << p.pose.orientation.x << " "
+                           << p.pose.orientation.y << " "
+                           << p.pose.orientation.z << " "
+                           << p.pose.orientation.w << std::endl;
+        }
+    }
+}
 
 int main(int argc, char** argv)
 {
@@ -1319,6 +1347,13 @@ int main(int argc, char** argv)
         status = ros::ok();
         rate.sleep();
     }
+
+    //--------------------------save trajectory----------------------------
+    if(traj_save_en){
+        save_trajectory(traj_save_path);
+        std::cout << "Save Point-LIO trajectory !!" << std::endl;  
+    }
+
     //--------------------------save map-----------------------------------
     /* 1. make sure you have enough memories
     /* 2. noted that pcd save will influence the real-time performences **/

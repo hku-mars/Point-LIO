@@ -28,6 +28,8 @@ bool   runtime_pos_log, pcd_save_en, path_en, extrinsic_est_en = true;
 bool   scan_pub_en, scan_body_pub_en;
 shared_ptr<Preprocess> p_pre;
 double time_diff_lidar_to_imu = 0.0;
+bool traj_save_en = false;
+std::string traj_save_path;
 
 void readParameters(ros::NodeHandle &nh)
 {
@@ -83,5 +85,7 @@ void readParameters(ros::NodeHandle &nh)
   nh.param<bool>("runtime_pos_log_enable", runtime_pos_log, 0);
   nh.param<bool>("pcd_save/pcd_save_en", pcd_save_en, false);
   nh.param<int>("pcd_save/interval", pcd_save_interval, -1);
+  nh.param<bool>("trajectory_save/traj_save_en", traj_save_en, false);
+  nh.param<std::string>("trajectory_save/traj_save_path", traj_save_path, "/home/catkin_ws/src/result/traj.txt");
 }
 

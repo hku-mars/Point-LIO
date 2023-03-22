@@ -51,3 +51,7 @@ pcd_save:
     pcd_save_en: false
     interval: -1                 # how many LiDAR frames saved in each pcd file; 
                                  # -1 : all frames will be saved in ONE pcd file, may lead to memory crash when having too much frames.
+
+trajectory_save:
+    traj_save_en: false
+    traj_file_path: "/home/catkin_ws/src/result/traj.txt" # You should enter absolute path.
