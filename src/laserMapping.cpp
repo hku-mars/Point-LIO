@@ -850,8 +850,15 @@ int main(int argc, char** argv)
             propag_time = 0;
             update_time = 0;
             t0 = omp_get_wtime();
-            p_imu->Process(Measures, feats_undistort);
-            
+            if (imu_en)
+            {
+                p_imu->Process(Measures, feats_undistort);
+            }
+            else
+            {
+                p_imu->imu_need_init_ = false;
+            }        
+
             if (feats_undistort->empty() || feats_undistort == NULL)
             {
                 continue;

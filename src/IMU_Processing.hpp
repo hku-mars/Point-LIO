@@ -122,6 +122,7 @@ void ImuProcess::Process(const MeasureGroup &meas, PointCloudXYZI::Ptr cur_pcl_u
 
       if (init_iter_num > MAX_INI_COUNT)
       {
+        ROS_INFO("IMU Initializing: %.1f %%", 100.0);
         imu_need_init_ = false;
       }
       return;
