@@ -156,6 +156,8 @@ Set ``` pcd_save_enable ``` in launchfile to ``` 1 ```. All the scans (in global
 
 # **6. Examples**
 
+The example datasets could be downloaded through [onedrive](https://connecthkuhk-my.sharepoint.com/:f:/g/personal/hdj65822_connect_hku_hk/EmRJYy4ZfAlMiIJ786ogCPoBcGQ2BAchuXjE5oJQjrQu0Q?e=igu44W). Pay attention that if you want to test on racing_drone.bag, [0.0, 9.810, 0.0] should be input in mapping/gravity in avia.yaml, and uncomment the line 911 to line 914, comment the line 916 to line 918 in laserMapping.cpp. Because this bag start from a high speed motion.
+
 ## **6.1. Example-1: SLAM on datasets with aggressive motions where IMU is saturated**
 <div align="center">
 <img src="https://github.com/hku-mars/Point-LIO/raw/master/image/example1.gif"  width="40%" />
