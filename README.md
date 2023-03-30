@@ -1,5 +1,5 @@
 # Point-LIO
-## Point-LIO: Robust High-Bandwidth Lidar-Inertial Odometry
+## Point-LIO: Robust High-Bandwidth Lidar-Inertial Odometry (Pay attention to modify the parameters for IMU in .yaml file, according to the IMU you use.)
 
 ## 1. Introduction
 
