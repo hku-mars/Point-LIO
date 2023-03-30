@@ -1098,7 +1098,7 @@ int main(int argc, char** argv)
                         {
                             state_out = kf_output.x_;
                             euler_cur = SO3ToEuler(state_out.rot);
-                            fout_out << setw(20) << Measures.lidar_beg_time - first_lidar_time << " " << euler_cur.transpose()*57.3 << " " << state_out.pos.transpose() << " " << state_out.vel.transpose() \
+                            fout_out << setw(20) << Measures.lidar_beg_time - first_lidar_time << " " << euler_cur.transpose() << " " << state_out.pos.transpose() << " " << state_out.vel.transpose() \
                             <<" "<<state_out.omg.transpose()<<" "<<state_out.acc.transpose()<<" "<<state_out.gravity.transpose()<<" "<<state_out.bg.transpose()<<" "<<state_out.ba.transpose()<<" "<<feats_undistort->points.size()<<endl;
                         }
                     }
@@ -1258,7 +1258,7 @@ int main(int argc, char** argv)
                         {
                             state_in = kf_input.x_;
                             euler_cur = SO3ToEuler(state_in.rot);
-                            fout_out << setw(20) << Measures.lidar_beg_time - first_lidar_time << " " << euler_cur.transpose()*57.3 << " " << state_in.pos.transpose() << " " << state_in.vel.transpose() \
+                            fout_out << setw(20) << Measures.lidar_beg_time - first_lidar_time << " " << euler_cur.transpose() << " " << state_in.pos.transpose() << " " << state_in.vel.transpose() \
                             <<" "<<state_in.bg.transpose()<<" "<<state_in.ba.transpose()<<" "<<state_in.gravity.transpose()<<" "<<feats_undistort->points.size()<<endl;
                         }
                     }
@@ -1317,14 +1317,14 @@ int main(int argc, char** argv)
                     {
                         state_out = kf_output.x_;
                         euler_cur = SO3ToEuler(state_out.rot);
-                        fout_out << setw(20) << Measures.lidar_beg_time - first_lidar_time << " " << euler_cur.transpose()*57.3 << " " << state_out.pos.transpose() << " " << state_out.vel.transpose() \
+                        fout_out << setw(20) << Measures.lidar_beg_time - first_lidar_time << " " << euler_cur.transpose() << " " << state_out.pos.transpose() << " " << state_out.vel.transpose() \
                         <<" "<<state_out.omg.transpose()<<" "<<state_out.acc.transpose()<<" "<<state_out.gravity.transpose()<<" "<<state_out.bg.transpose()<<" "<<state_out.ba.transpose()<<" "<<feats_undistort->points.size()<<endl;
                     }
                     else
                     {
                         state_in = kf_input.x_;
                         euler_cur = SO3ToEuler(state_in.rot);
-                        fout_out << setw(20) << Measures.lidar_beg_time - first_lidar_time << " " << euler_cur.transpose()*57.3 << " " << state_in.pos.transpose() << " " << state_in.vel.transpose() \
+                        fout_out << setw(20) << Measures.lidar_beg_time - first_lidar_time << " " << euler_cur.transpose() << " " << state_in.pos.transpose() << " " << state_in.vel.transpose() \
                         <<" "<<state_in.bg.transpose()<<" "<<state_in.ba.transpose()<<" "<<state_in.gravity.transpose()<<" "<<feats_undistort->points.size()<<endl;
                     }
                 }
