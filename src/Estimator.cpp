@@ -98,8 +98,8 @@ Eigen::Matrix<double, 24, 24> df_dx_input(state_input &s, const input_ikfom &in)
 	in.acc.boxminus(acc_, s.ba);
 	vect3 omega;
 	in.gyro.boxminus(omega, s.bg);
-	cov.template block<3, 3>(12, 3) = -s.rot.toRotationMatrix()*MTK::hat(acc_);
-	cov.template block<3, 3>(12, 18) = -s.rot.toRotationMatrix();
+	cov.template block<3, 3>(12, 3) = -s.rot.normalized().toRotationMatrix()*MTK::hat(acc_);
+	cov.template block<3, 3>(12, 18) = -s.rot.normalized().toRotationMatrix();
 	// Eigen::Matrix<state_ikfom::scalar, 2, 1> vec = Eigen::Matrix<state_ikfom::scalar, 2, 1>::Zero();
 	// Eigen::Matrix<state_ikfom::scalar, 3, 2> grav_matrix;
 	// s.S2_Mx(grav_matrix, vec, 21);
@@ -111,7 +111,7 @@ Eigen::Matrix<double, 24, 24> df_dx_input(state_input &s, const input_ikfom &in)
 // Eigen::Matrix<double, 24, 12> df_dw_input(state_input &s, const input_ikfom &in)
 // {
 // 	Eigen::Matrix<double, 24, 12> cov = Eigen::Matrix<double, 24, 12>::Zero();
-// 	cov.template block<3, 3>(12, 3) = -s.rot.toRotationMatrix();
+// 	cov.template block<3, 3>(12, 3) = -s.rot.normalized().toRotationMatrix();
 // 	cov.template block<3, 3>(3, 0) = -Eigen::Matrix3d::Identity();
 // 	cov.template block<3, 3>(15, 6) = Eigen::Matrix3d::Identity();
 // 	cov.template block<3, 3>(18, 9) = Eigen::Matrix3d::Identity();
@@ -122,8 +122,8 @@ Eigen::Matrix<double, 30, 30> df_dx_output(state_output &s, const input_ikfom &i
 {
 	Eigen::Matrix<double, 30, 30> cov = Eigen::Matrix<double, 30, 30>::Zero();
 	cov.template block<3, 3>(0, 12) = Eigen::Matrix3d::Identity();
-	cov.template block<3, 3>(12, 3) = -s.rot.toRotationMatrix()*MTK::hat(s.acc);
-	cov.template block<3, 3>(12, 18) = s.rot.toRotationMatrix();
+	cov.template block<3, 3>(12, 3) = -s.rot.normalized().toRotationMatrix()*MTK::hat(s.acc);
+	cov.template block<3, 3>(12, 18) = s.rot.normalized().toRotationMatrix();
 	// Eigen::Matrix<state_ikfom::scalar, 2, 1> vec = Eigen::Matrix<state_ikfom::scalar, 2, 1>::Zero();
 	// Eigen::Matrix<state_ikfom::scalar, 3, 2> grav_matrix;
 	// s.S2_Mx(grav_matrix, vec, 21);

@@ -166,7 +166,7 @@ public:
 				}
 				MTK::SO3<scalar_type> res;
 				res.w() = MTK::exp<scalar_type, 3>(res.vec(), seg_SO3, scalar_type(1/2));
-				F_x1.template block<3, 3>(idx, idx) = res.toRotationMatrix();		
+				F_x1.template block<3, 3>(idx, idx) = res.normalized().toRotationMatrix();		
 				res_temp_SO3 = MTK::A_matrix(seg_SO3);
 				for(int i = 0; i < n; i++){
 					f_x_final. template block<3, 1>(idx, i) = res_temp_SO3 * (f_x_. template block<3, 1>(dim, i));	
