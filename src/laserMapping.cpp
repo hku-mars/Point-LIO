@@ -863,6 +863,50 @@ int main(int argc, char** argv)
             {
                 continue;
             }
+            if(imu_en)
+            {
+                if (!p_imu->gravity_align_)
+                {
+                    while (Measures.lidar_beg_time > imu_next.header.stamp.toSec())
+                    {
+                        imu_last = imu_next;
+                        imu_next = *(imu_deque.front());
+                        imu_deque.pop_front();
+                        // imu_deque.pop();
+                    }
+                    // state_in.gravity << VEC_FROM_ARRAY(gravity_init);
+                    // state_out.gravity << VEC_FROM_ARRAY(gravity_init);
+                    // state_out.acc << VEC_FROM_ARRAY(gravity_init);
+                    // state_out.acc *= -1;
+
+                    state_in.gravity =  -1 * p_imu->mean_acc * G_m_s2 / acc_norm; 
+                    state_out.gravity = -1 * p_imu->mean_acc * G_m_s2 / acc_norm; 
+                    state_out.acc = p_imu->mean_acc * G_m_s2 / acc_norm;
+                    if (gravity_align)
+                    {
+                        Eigen::Matrix3d rot_init;
+                        p_imu->gravity_ << VEC_FROM_ARRAY(gravity);
+                        p_imu->Set_init(state_in.gravity, rot_init);
+                        state_in.gravity = state_out.gravity = p_imu->gravity_;
+                        state_in.rot = state_out.rot = rot_init;
+                        state_in.rot.normalize();
+                        state_out.rot.normalize();
+                        state_out.acc = -rot_init.transpose() * state_out.gravity;
+                    }
+                    kf_input.change_x(state_in);
+                    kf_output.change_x(state_out);
+                }
+            }
+            else
+            {
+                if (!p_imu->gravity_align_)
+                {
+                    state_in.gravity << VEC_FROM_ARRAY(gravity_init);
+                    state_out.gravity << VEC_FROM_ARRAY(gravity_init);
+                    state_out.acc << VEC_FROM_ARRAY(gravity_init);
+                    state_out.acc *= -1;
+                }
+            }
             /*** Segment the map in lidar FOV ***/
             lasermap_fov_segment();
             /*** downsample the feature points in a scan ***/
@@ -899,34 +943,7 @@ int main(int argc, char** argv)
                 init_feats_world->points.emplace_back(feats_down_world->points[i]);}
                 if(init_feats_world->size() < init_map_size) continue;
                 ikdtree.Build(init_feats_world->points); 
-                if(imu_en)
-                {
-                    while (Measures.lidar_beg_time > imu_next.header.stamp.toSec())
-                    {
-                        imu_last = imu_next;
-                        imu_next = *(imu_deque.front());
-                        imu_deque.pop_front();
-                        // imu_deque.pop();
-                    }
-                    // state_in.gravity << VEC_FROM_ARRAY(gravity_init);
-                    // state_out.gravity << VEC_FROM_ARRAY(gravity_init);
-                    // state_out.acc << VEC_FROM_ARRAY(gravity_init);
-                    // state_out.acc *= -1;
-
-                    state_in.gravity =  -1 * p_imu->mean_acc * G_m_s2 / acc_norm; 
-                    state_out.gravity = -1 * p_imu->mean_acc * G_m_s2 / acc_norm; 
-                    state_out.acc = p_imu->mean_acc * G_m_s2 / acc_norm;
-                }
-                else
-                {
-                    state_in.gravity << VEC_FROM_ARRAY(gravity_init);
-                    state_out.gravity << VEC_FROM_ARRAY(gravity_init);
-                    state_out.acc << VEC_FROM_ARRAY(gravity_init);
-                    state_out.acc *= -1;
-                }
                 init_map = true;
-                kf_input.change_x(state_in);
-                kf_output.change_x(state_out);
                 publish_init_kdtree(pubLaserCloudMap); //(pubLaserCloudFullRes);
                 continue;
             }        

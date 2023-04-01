@@ -39,14 +39,16 @@ class ImuProcess
   void Reset();
   void Reset(double start_timestamp, const sensor_msgs::ImuConstPtr &lastimu);
   void Process(const MeasureGroup &meas, PointCloudXYZI::Ptr pcl_un_);
+  void Set_init(Eigen::Vector3d &tmp_gravity, Eigen::Matrix3d &rot);
 
   ofstream fout_imu;
   // double first_lidar_time;
   int    lidar_type;
   bool   imu_en;
-  V3D mean_acc;
+  V3D mean_acc, gravity_;
   bool   imu_need_init_ = true;
   bool   b_first_frame_ = true;
+  bool   gravity_align_ = false;
 
  private:
   void IMU_init(const MeasureGroup &meas, int &N);
@@ -55,7 +57,7 @@ class ImuProcess
 };
 
 ImuProcess::ImuProcess()
-    : b_first_frame_(true), imu_need_init_(true)
+    : b_first_frame_(true), imu_need_init_(true), gravity_align_(false)
 {
   imu_en = true;
   init_iter_num = 1;
@@ -124,16 +126,51 @@ void ImuProcess::Process(const MeasureGroup &meas, PointCloudXYZI::Ptr cur_pcl_u
       {
         ROS_INFO("IMU Initializing: %.1f %%", 100.0);
         imu_need_init_ = false;
+        *cur_pcl_un_ = *(meas.lidar);
       }
       return;
     }
-
+    if (!gravity_align_) gravity_align_ = true;
     *cur_pcl_un_ = *(meas.lidar);
     return;
   }
   else
   {
-      *cur_pcl_un_ = *(meas.lidar);
-      return;
+    if (!b_first_frame_) 
+    {if (!gravity_align_) gravity_align_ = true;}
+    else
+    {b_first_frame_ = false;}
+    *cur_pcl_un_ = *(meas.lidar);
+    return;
+  }
+}
+
+void ImuProcess::Set_init(Eigen::Vector3d &tmp_gravity, Eigen::Matrix3d &rot)
+{
+  /** 1. initializing the gravity, gyro bias, acc and gyro covariance
+   ** 2. normalize the acceleration measurenments to unit gravity **/
+  // V3D tmp_gravity = - mean_acc / mean_acc.norm() * G_m_s2; // state_gravity;
+  M3D hat_grav;
+  hat_grav << 0.0, gravity_(2), -gravity_(1),
+              -gravity_(2), 0.0, gravity_(0),
+              gravity_(1), -gravity_(0), 0.0;
+  double align_norm = (hat_grav * tmp_gravity).norm() / gravity_.norm() / gravity_.norm();
+  double align_cos = gravity_.transpose() * tmp_gravity;
+  align_cos = align_cos / gravity_.norm() / gravity_.norm();
+  if (align_norm < 1e-6)
+  {
+    if (align_cos > 1e-6)
+    {
+      rot = Eye3d;
+    }
+    else
+    {
+      rot = -Eye3d;
+    }
+  }
+  else
+  {
+    V3D align_angle = hat_grav * tmp_gravity / (hat_grav * tmp_gravity).norm() * acos(align_cos); 
+    rot = Exp(align_angle(0), align_angle(1), align_angle(2));
   }
 }

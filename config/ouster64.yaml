@@ -33,7 +33,9 @@ mapping:
     match_s: 81
     fov_degree: 180 
     det_range: 150.0
-    gravity: [0.0, 0.0, -9.810] # preknown gravity, use when imu_en is false or start from a non-stationary state
+    gravity_align: true # true to align the z axis of world frame with the direction of gravity, and the gravity direction should be specified below
+    gravity: [0.0, 0.0, -9.810] # [0.0, 9.810, 0.0] # gravity to be aligned
+    gravity_init: [0.0, 0.0, -9.810] # [0.0, 9.810, 0.0] # # preknown gravity in the first IMU body frame, use when imu_en is false or start from a non-stationary state
     extrinsic_T: [0.0, 0.0, 0.0]
     extrinsic_R: [ 1, 0, 0,
                    0, 1, 0,
