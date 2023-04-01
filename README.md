@@ -10,7 +10,13 @@
     <font color=#a0a0a0 size=2>The framework and key points of the Point-LIO.</font>
 </div>
 
-**Point-LIO** is a robust and high-bandwidth LiDAR-inertial odometry with the capability to estimate extremely aggressive robotic motions. Point-LIO has two key novelties that enable a high-bandwidth LiDAR-inertial odometry (LIO). The first one is a point-by-point LIO framework, where the state is updated at each LiDAR point measurement without accumulating them into a frame. This point-by-point update allows an extremely high-frequency odometry output, significantly increases the odometry bandwidth, and also fundamentally removes the artificial in-frame motion distortion in aggressive motions. The second main novelty is a stochastic process-augmented kinematic model which models the IMU measurements as an output, instead of input as in existing filter-based odometry or SLAM systems, of the model. This new modeling method enables accurate localization and reliable mapping for aggressive motions even when IMU measurements are saturated. In experiments, Point-LIO is able to provide accurate, high-frequency odometry (4-8 kHz) and reliable mapping under severe vibrations and aggressive motions with high angular velocity (75 rad s^{-1}) beyond the IMU measuring ranges. And Point-LIO is computationally efficient, robust, versatile on public datasets with general motions. As an odometry, Point-LIO could be used in various autonomous tasks, such as trajectory planning, control, and perception, especially in cases involving very fast ego-motions (e.g., in the presence of severe vibration and high angular or linear velocity) or requiring high-rate odometry output and mapping (e.g., for high-rate feedback control and perception).
+**New features:**
+1. would not fly under degeneration.
+2. high odometry output frequency, 4k-8kHz.
+3. robust to IMU saturation and severe vibration, and other aggressive motions (75 rad/s in our test).
+4. no motion distortion.
+5. computationally efficient, robust, versatile on public datasets with general motions. 
+6. As an odometry, Point-LIO could be used in various autonomous tasks, such as trajectory planning, control, and perception, especially in cases involving very fast ego-motions (e.g., in the presence of severe vibration and high angular or linear velocity) or requiring high-rate odometry output and mapping (e.g., for high-rate feedback control and perception).
 
 **Important notes:**
 
@@ -51,12 +57,6 @@ Our accompany video is available on **YouTube**.
 ### 2.2 Produce high odometry output frequence and high bandwidth
 
 ### 2.3 SLAM with aggressive motions even the IMU is saturated
-
-**New features:**
-1. would not fly under degeneration.
-2. high odometry output frequency, 4k-8kHz.
-3. robust to IMU saturation and severe vibration, and other aggressive motions.
-4. no motion distortion.
 
 # **3. Prerequisites**
 
