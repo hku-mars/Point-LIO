@@ -42,7 +42,7 @@ The codes of this repo are contributed by:
 
 
 ## **1.2. Related paper**
-Our paper is accepted to Advanced Intelligent Systems(AIS), and is in the process of production. The preprint version is attached here, [Point-LIO_preprint.pdf](https://github.com/hku-mars/Point-LIO/files/10989136/Point-LIO_preprint.pdf)
+Our paper is accepted to Advanced Intelligent Systems(AIS), and is in the process of production. DOI: 10.1002/aisy.202200459
 
 
 ## **1.3. Related video**
