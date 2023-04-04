@@ -850,14 +850,8 @@ int main(int argc, char** argv)
             propag_time = 0;
             update_time = 0;
             t0 = omp_get_wtime();
-            if (imu_en)
-            {
-                p_imu->Process(Measures, feats_undistort);
-            }
-            else
-            {
-                p_imu->imu_need_init_ = false;
-            }        
+            
+            p_imu->Process(Measures, feats_undistort);
 
             if (feats_undistort->empty() || feats_undistort == NULL)
             {
@@ -1091,18 +1085,18 @@ int main(int argc, char** argv)
                         continue;
                     }
 
-                    // if(prop_at_freq_of_imu)
-                    // {
-                    //     double dt_cov = time_current - time_update_last;
-                    //     if ((imu_upda_cov && dt_cov > 0.0) || (!imu_en && (dt_cov >= imu_time_inte)) || (imu_en && (dt_cov >= imu_time_inte * 1.2))) // (point_cov_not_prop && imu_prop_cov)
-                    //     {
-                    //         double propag_cov_start = omp_get_wtime();
-                    //         kf_output.predict(dt_cov, Q_output, input_in, false, true);
-                    //         imu_upda_cov = false;
-                    //         time_update_last = time_current;
-                    //         propag_time += omp_get_wtime() - propag_cov_start;
-                    //     }
-                    // }
+                    if(prop_at_freq_of_imu)
+                    {
+                        double dt_cov = time_current - time_update_last;
+                        if (!imu_en && (dt_cov >= imu_time_inte)) // (point_cov_not_prop && imu_prop_cov)
+                        {
+                            double propag_cov_start = omp_get_wtime();
+                            kf_output.predict(dt_cov, Q_output, input_in, false, true);
+                            imu_upda_cov = false;
+                            time_update_last = time_current;
+                            propag_time += omp_get_wtime() - propag_cov_start;
+                        }
+                    }
 
                     solve_start = omp_get_wtime();
                         

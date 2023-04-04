@@ -139,7 +139,8 @@ void ImuProcess::Process(const MeasureGroup &meas, PointCloudXYZI::Ptr cur_pcl_u
     if (!b_first_frame_) 
     {if (!gravity_align_) gravity_align_ = true;}
     else
-    {b_first_frame_ = false;}
+    {b_first_frame_ = false;
+    return;}
     *cur_pcl_un_ = *(meas.lidar);
     return;
   }
