@@ -61,7 +61,7 @@ Our accompany video is available on **YouTube**.
 # **3. Prerequisites**
 
 ## **3.1 Ubuntu and [ROS](https://www.ros.org/)**
-We tested our code on Ubuntu18.04 with ros melodic and Ubuntu20.04 with noetic. Additional ROS package is required:
+We tested our code on Ubuntu20.04 with noetic. Additional ROS package is required:
 ```
 sudo apt-get install ros-xxx-pcl-conversions
 ```
