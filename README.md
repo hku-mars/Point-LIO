@@ -1,5 +1,5 @@
-# Point-LIO
-## Point-LIO: Robust High-Bandwidth Lidar-Inertial Odometry (Pay attention to modify the parameters for IMU in .yaml file, according to the IMU you use.)
+# Point-LIO (Ubuntu 18.04 has environment problems for Point-LIO, please use Ubuntu 20.04 and above)
+## Point-LIO: Robust High-Bandwidth Lidar-Inertial Odometry (Pay attention to modifying the parameters for IMU in .yaml file, according to the IMU you use.)
 
 ## 1. Introduction
 
