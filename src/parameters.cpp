@@ -27,7 +27,7 @@ std::vector<double> extrinR;
 bool   runtime_pos_log, pcd_save_en, path_en, extrinsic_est_en = true;
 bool   scan_pub_en, scan_body_pub_en;
 shared_ptr<Preprocess> p_pre;
-double time_diff_lidar_to_imu = 0.0;
+double time_lag_imu_to_lidar = 0.0;
 
 void readParameters(ros::NodeHandle &nh)
 {
@@ -48,7 +48,7 @@ void readParameters(ros::NodeHandle &nh)
   nh.param<int>("common/con_frame_num",con_frame_num,1);
   nh.param<bool>("common/cut_frame",cut_frame,false);
   nh.param<double>("common/cut_frame_time_interval",cut_frame_time_interval,0.1);
-  nh.param<double>("common/time_diff_lidar_to_imu",time_diff_lidar_to_imu,0.0);
+  nh.param<double>("common/time_lag_imu_to_lidar",time_lag_imu_to_lidar,0.0);
   nh.param<double>("filter_size_surf",filter_size_surf_min,0.5);
   nh.param<double>("filter_size_map",filter_size_map_min,0.5);
   nh.param<double>("cube_side_length",cube_len,200);

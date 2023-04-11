@@ -380,7 +380,7 @@ void imu_cbk(const sensor_msgs::Imu::ConstPtr &msg_in)
     publish_count ++;
     sensor_msgs::Imu::Ptr msg(new sensor_msgs::Imu(*msg_in));
 
-    msg->header.stamp = ros::Time().fromSec(msg_in->header.stamp.toSec() - time_diff_lidar_to_imu);
+    msg->header.stamp = ros::Time().fromSec(msg_in->header.stamp.toSec() - time_lag_imu_to_lidar);
     double timestamp = msg->header.stamp.toSec();
 
     mtx_buffer.lock();
@@ -626,7 +626,7 @@ void publish_frame_world(const ros::Publisher & pubLaserCloudFullRes)
             laserCloudWorld->points[i].z = feats_down_world->points[i].z;
             laserCloudWorld->points[i].intensity = feats_down_world->points[i].intensity;
         }
-
+        
         *pcl_wait_save += *laserCloudWorld;
 
         static int scan_wait_num = 0;

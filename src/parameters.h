@@ -35,6 +35,6 @@ extern std::vector<double> extrinR;
 extern bool   runtime_pos_log, pcd_save_en, path_en;
 extern bool   scan_pub_en, scan_body_pub_en;
 extern shared_ptr<Preprocess> p_pre;
-extern double time_diff_lidar_to_imu;
+extern double time_lag_imu_to_lidar;
 
 void readParameters(ros::NodeHandle &n);

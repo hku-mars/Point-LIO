@@ -5,7 +5,8 @@ common:
     con_frame_num: 1 # the number of frames combined
     cut_frame: false # true: if you need to cut one LiDAR frame into several subframes
     cut_frame_time_interval: 0.1 # should be integral fraction of 1 / LiDAR frequency 
-    time_diff_lidar_to_imu: 0.0 # Time offset between LiDAR and IMU calibrated by other algorithms, e.g., LI-Init (find in Readme)
+    time_lag_imu_to_lidar: 0.0 # Time offset between LiDAR and IMU calibrated by other algorithms, e.g., LI-Init (find in Readme)
+                               # the timesample of IMU is transferred from the current timeline to LiDAR's timeline by subtracting this value
 
 preprocess:
     lidar_type: 3 # 2 #velodyne                # 1 Livox Avia LiDAR
@@ -20,7 +21,7 @@ mapping:
     satu_acc: 30.0 # the saturation value of IMU's acceleration. not related to the units
     satu_gyro: 35 # the saturation value of IMU's angular velocity. not related to the units
     acc_norm: 9.81 # 1.0 for g as unit, 9.81 for m/s^2 as unit of the IMU's acceleration
-    lidar_meas_cov: 0.01 # 0.001
+    lidar_meas_cov: 0.1 # 0.01
     acc_cov_output: 500
     gyr_cov_output: 1000 
     b_acc_cov: 0.0001 

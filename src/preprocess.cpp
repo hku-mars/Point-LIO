@@ -100,13 +100,7 @@ void Preprocess::avia_handler(const livox_ros_driver::CustomMsg::ConstPtr &msg)
   pl_surf.reserve(plsize);
   pl_full.resize(plsize);
 
-  for(int i=0; i<N_SCANS; i++)
-  {
-    pl_buff[i].clear();
-    pl_buff[i].reserve(plsize);
-  }
-  uint valid_num = 0;
-  
+  uint valid_num = 0;  
   
   for(uint i=1; i<plsize; i++)
   {
@@ -120,6 +114,9 @@ void Preprocess::avia_handler(const livox_ros_driver::CustomMsg::ConstPtr &msg)
         pl_full[i].z = msg->points[i].z;
         pl_full[i].intensity = msg->points[i].reflectivity;
         pl_full[i].curvature = msg->points[i].offset_time / float(1000000); // use curvature as time of each laser points, curvature unit: ms
+
+        if (i==0) pl_full[i].curvature = fabs(pl_full[i].curvature) < 1.0 ? pl_full[i].curvature : 0.0;
+        else pl_full[i].curvature = fabs(pl_full[i].curvature - pl_full[i-1].curvature) < 1.0 ? pl_full[i].curvature : pl_full[i-1].curvature + 0.004166667f;
 
         if((abs(pl_full[i].x - pl_full[i-1].x) > 1e-7) 
             || (abs(pl_full[i].y - pl_full[i-1].y) > 1e-7)
