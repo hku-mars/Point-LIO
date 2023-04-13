@@ -300,7 +300,7 @@ public:
 	friend S2<scalar, den, num, S2_typ> operator*(const SO3<scalar>& rot, const S2<scalar, den, num, S2_typ>& dir)
 	{
 		S2<scalar, den, num, S2_typ> ret;
-		ret.vec = rot * dir.vec;
+		ret.vec = rot.normalized() * dir.vec;
 		return ret;
 	}
 	

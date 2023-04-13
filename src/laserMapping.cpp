@@ -130,11 +130,11 @@ void pointBodyLidarToIMU(PointType const * const pi, PointType * const po)
     {
         if (!use_imu_as_input)
         {
-            p_body_imu = kf_output.x_.offset_R_L_I * p_body_lidar + kf_output.x_.offset_T_L_I;
+            p_body_imu = kf_output.x_.offset_R_L_I.normalized() * p_body_lidar + kf_output.x_.offset_T_L_I;
         }
         else
         {
-            p_body_imu = kf_input.x_.offset_R_L_I * p_body_lidar + kf_input.x_.offset_T_L_I;
+            p_body_imu = kf_input.x_.offset_R_L_I.normalized() * p_body_lidar + kf_input.x_.offset_T_L_I;
         }
     }
     else
@@ -165,11 +165,11 @@ void lasermap_fov_segment()
     V3D pos_LiD;
     if (use_imu_as_input)
     {
-        pos_LiD = kf_input.x_.pos + kf_input.x_.rot * Lidar_T_wrt_IMU;
+        pos_LiD = kf_input.x_.pos + kf_input.x_.rot.normalized() * Lidar_T_wrt_IMU;
     }
     else
     {
-        pos_LiD = kf_output.x_.pos + kf_output.x_.rot * Lidar_T_wrt_IMU;
+        pos_LiD = kf_output.x_.pos + kf_output.x_.rot.normalized() * Lidar_T_wrt_IMU;
     }
     if (!Localmap_Initialized){
         for (int i = 0; i < 3; i++){
@@ -964,11 +964,11 @@ int main(int argc, char** argv)
                 {
                     if (!use_imu_as_input)
                     {
-                        point_this = kf_output.x_.offset_R_L_I * point_this + kf_output.x_.offset_T_L_I;
+                        point_this = kf_output.x_.offset_R_L_I.normalized() * point_this + kf_output.x_.offset_T_L_I;
                     }
                     else
                     {
-                        point_this = kf_input.x_.offset_R_L_I * point_this + kf_input.x_.offset_T_L_I;
+                        point_this = kf_input.x_.offset_R_L_I.normalized() * point_this + kf_input.x_.offset_T_L_I;
                     }
                 }
                 else

@@ -69,7 +69,7 @@ Eigen::Matrix<double, 24, 1> get_f_input(state_input &s, const input_ikfom &in)
 	Eigen::Matrix<double, 24, 1> res = Eigen::Matrix<double, 24, 1>::Zero();
 	vect3 omega;
 	in.gyro.boxminus(omega, s.bg);
-	vect3 a_inertial = s.rot * (in.acc-s.ba); 
+	vect3 a_inertial = s.rot.normalized() * (in.acc-s.ba); 
 	for(int i = 0; i < 3; i++ ){
 		res(i) = s.vel[i];
 		res(i + 3) =  omega[i]; 
@@ -81,7 +81,7 @@ Eigen::Matrix<double, 24, 1> get_f_input(state_input &s, const input_ikfom &in)
 Eigen::Matrix<double, 30, 1> get_f_output(state_output &s, const input_ikfom &in)
 {
 	Eigen::Matrix<double, 30, 1> res = Eigen::Matrix<double, 30, 1>::Zero();
-	vect3 a_inertial = s.rot * s.acc; 
+	vect3 a_inertial = s.rot.normalized() * s.acc; 
 	for(int i = 0; i < 3; i++ ){
 		res(i) = s.vel[i];
 		res(i + 3) = s.omg[i]; 
@@ -243,17 +243,17 @@ void h_model_input(state_input &s, esekfom::dyn_share_modified<double> &ekfom_da
 				V3D p_body = pbody_list[idx+j+1];
 				M3D p_crossmat, p_imu_crossmat;
 				p_crossmat << SKEW_SYM_MATRX(p_body);
-				V3D point_imu = s.offset_R_L_I * p_body + s.offset_T_L_I;
+				V3D point_imu = s.offset_R_L_I.normalized() * p_body + s.offset_T_L_I;
 				p_imu_crossmat << SKEW_SYM_MATRX(point_imu);
-				V3D C(s.rot.conjugate() * norm_vec);
+				V3D C(s.rot.conjugate().normalized() * norm_vec);
 				V3D A(p_imu_crossmat * C);
-				V3D B(p_crossmat * s.offset_R_L_I.conjugate() * C);
+				V3D B(p_crossmat * s.offset_R_L_I.conjugate().normalized() * C);
 				ekfom_data.h_x.block<1, 12>(m, 0) << norm_vec(0), norm_vec(1), norm_vec(2), VEC_FROM_ARRAY(A), VEC_FROM_ARRAY(B), VEC_FROM_ARRAY(C);
 			}
 			else
 			{   
 				M3D point_crossmat = crossmat_list[idx+j+1];
-				V3D C(s.rot.conjugate() * norm_vec);
+				V3D C(s.rot.conjugate().normalized() * norm_vec);
 				V3D A(point_crossmat * C);
 				ekfom_data.h_x.block<1, 12>(m, 0) << norm_vec(0), norm_vec(1), norm_vec(2), VEC_FROM_ARRAY(A), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
 			}
@@ -330,17 +330,17 @@ void h_model_output(state_output &s, esekfom::dyn_share_modified<double> &ekfom_
 				V3D p_body = pbody_list[idx+j+1];
 				M3D p_crossmat, p_imu_crossmat;
 				p_crossmat << SKEW_SYM_MATRX(p_body);
-				V3D point_imu = s.offset_R_L_I * p_body + s.offset_T_L_I;
+				V3D point_imu = s.offset_R_L_I.normalized() * p_body + s.offset_T_L_I;
 				p_imu_crossmat << SKEW_SYM_MATRX(point_imu);
-				V3D C(s.rot.conjugate() * norm_vec);
+				V3D C(s.rot.conjugate().normalized() * norm_vec);
 				V3D A(p_imu_crossmat * C);
-				V3D B(p_crossmat * s.offset_R_L_I.conjugate() * C);
+				V3D B(p_crossmat * s.offset_R_L_I.conjugate().normalized() * C);
 				ekfom_data.h_x.block<1, 12>(m, 0) << norm_vec(0), norm_vec(1), norm_vec(2), VEC_FROM_ARRAY(A), VEC_FROM_ARRAY(B), VEC_FROM_ARRAY(C);
 			}
 			else
 			{   
 				M3D point_crossmat = crossmat_list[idx+j+1];
-				V3D C(s.rot.conjugate() * norm_vec);
+				V3D C(s.rot.conjugate().normalized() * norm_vec);
 				V3D A(point_crossmat * C);
 				// V3D A(point_crossmat * state.rot_end.transpose() * norm_vec);
 				ekfom_data.h_x.block<1, 12>(m, 0) << norm_vec(0), norm_vec(1), norm_vec(2), VEC_FROM_ARRAY(A), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
@@ -407,22 +407,22 @@ void pointBodyToWorld(PointType const * const pi, PointType * const po)
 	{	
 		if (!use_imu_as_input)
 		{
-			p_global = kf_output.x_.rot * (kf_output.x_.offset_R_L_I * p_body + kf_output.x_.offset_T_L_I) + kf_output.x_.pos;
+			p_global = kf_output.x_.rot.normalized() * (kf_output.x_.offset_R_L_I.normalized() * p_body + kf_output.x_.offset_T_L_I) + kf_output.x_.pos;
 		}
 		else
 		{
-			p_global = kf_input.x_.rot * (kf_input.x_.offset_R_L_I * p_body + kf_input.x_.offset_T_L_I) + kf_input.x_.pos;
+			p_global = kf_input.x_.rot.normalized() * (kf_input.x_.offset_R_L_I.normalized() * p_body + kf_input.x_.offset_T_L_I) + kf_input.x_.pos;
 		}
 	}
 	else
 	{
 		if (!use_imu_as_input)
 		{
-			p_global = kf_output.x_.rot * (Lidar_R_wrt_IMU * p_body + Lidar_T_wrt_IMU) + kf_output.x_.pos;
+			p_global = kf_output.x_.rot.normalized() * (Lidar_R_wrt_IMU * p_body + Lidar_T_wrt_IMU) + kf_output.x_.pos;
 		}
 		else
 		{
-			p_global = kf_input.x_.rot * (Lidar_R_wrt_IMU * p_body + Lidar_T_wrt_IMU) + kf_input.x_.pos;
+			p_global = kf_input.x_.rot.normalized() * (Lidar_R_wrt_IMU * p_body + Lidar_T_wrt_IMU) + kf_input.x_.pos;
 		}
 	}
 
