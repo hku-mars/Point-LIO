@@ -207,6 +207,7 @@ void lasermap_fov_segment()
     LocalMap_Points = New_LocalMap_Points;
 
     points_cache_collect();
+    if(cub_needrm.size() > 0) int kdtree_delete_counter = ikdtree.Delete_Point_Boxes(cub_needrm);
 }
 
 void standard_pcl_cbk(const sensor_msgs::PointCloud2::ConstPtr &msg) 
@@ -516,11 +517,11 @@ void map_incremental()
         for(int i = 0; i < feats_down_size; i++)
         {
             /* No points found within the given threshold of nearest search*/
-            if (Nearest_Points[i].empty()){
+            // if (Nearest_Points[i].empty()){
                 
-                PointNoNeedDownsample.emplace_back(feats_down_world->points[i]);
-                continue;          
-            }      
+            //     PointNoNeedDownsample.emplace_back(feats_down_world->points[i]);
+            //     continue;          
+            // }      
             /* decide if need add to map */
             
             if (!Nearest_Points[i].empty())
@@ -533,7 +534,7 @@ void map_incremental()
                 mid_point.y = floor(feats_down_world->points[i].y/filter_size_map_min)*filter_size_map_min + 0.5 * filter_size_map_min;
                 mid_point.z = floor(feats_down_world->points[i].z/filter_size_map_min)*filter_size_map_min + 0.5 * filter_size_map_min;
                 /* If the nearest points is definitely outside the downsample box */
-                if (fabs(points_near[0].x - mid_point.x) > 1.732 * filter_size_map_min || fabs(points_near[0].y - mid_point.y) > 1.732 * filter_size_map_min || fabs(points_near[0].z - mid_point.z) > 1.732 * filter_size_map_min){
+                if (fabs(points_near[0].x - mid_point.x) > 0.5 * filter_size_map_min && fabs(points_near[0].y - mid_point.y) > 0.5 * filter_size_map_min && fabs(points_near[0].z - mid_point.z) > 0.5 * filter_size_map_min){
                     PointNoNeedDownsample.emplace_back(feats_down_world->points[i]);
                     continue;
                 }
@@ -543,9 +544,9 @@ void map_incremental()
                 {
                     if (points_near.size() < NUM_MATCH_POINTS) break;
                     /* Those points which are outside the downsample box should not be considered. */
-                    if (fabs(points_near[readd_i].x - mid_point.x) > 0.5 * filter_size_map_min || fabs(points_near[readd_i].y - mid_point.y) > 0.5 * filter_size_map_min || fabs(points_near[readd_i].z - mid_point.z) > 0.5 * filter_size_map_min) {
-                        continue;                    
-                    }
+                    // if (fabs(points_near[readd_i].x - mid_point.x) > 0.5 * filter_size_map_min || fabs(points_near[readd_i].y - mid_point.y) > 0.5 * filter_size_map_min || fabs(points_near[readd_i].z - mid_point.z) > 0.5 * filter_size_map_min) {
+                    //     continue;                    
+                    // }
                     if (calc_dist<float>(points_near[readd_i], mid_point) < dist)
                     {
                         need_add = false;
@@ -559,7 +560,7 @@ void map_incremental()
                 PointToAdd.emplace_back(feats_down_world->points[i]);
             }
         }
-    
+    int add_point_size = ikdtree.Add_Points(PointToAdd, true);
     ikdtree.Add_Points(PointNoNeedDownsample, false);
 }
 
