@@ -515,15 +515,7 @@ void map_incremental()
     PointNoNeedDownsample.reserve(feats_down_size);
     
         for(int i = 0; i < feats_down_size; i++)
-        {
-            /* No points found within the given threshold of nearest search*/
-            // if (Nearest_Points[i].empty()){
-                
-            //     PointNoNeedDownsample.emplace_back(feats_down_world->points[i]);
-            //     continue;          
-            // }      
-            /* decide if need add to map */
-            
+        {            
             if (!Nearest_Points[i].empty())
             {
                 const PointVector &points_near = Nearest_Points[i];
@@ -537,11 +529,10 @@ void map_incremental()
                     PointNoNeedDownsample.emplace_back(feats_down_world->points[i]);
                     continue;
                 }
-                /* Check if there is a point already in the downsample box and closer to the center point */
+                /* Check if there is a point already in the downsample box */
                 float dist  = calc_dist<float>(feats_down_world->points[i],mid_point);
                 for (int readd_i = 0; readd_i < points_near.size(); readd_i ++)
                 {
-                    // if (points_near.size() < NUM_MATCH_POINTS) break;
                     /* Those points which are outside the downsample box should not be considered. */
                     if (fabs(points_near[readd_i].x - mid_point.x) < 0.5 * filter_size_map_min && fabs(points_near[readd_i].y - mid_point.y) < 0.5 * filter_size_map_min && fabs(points_near[readd_i].z - mid_point.z) < 0.5 * filter_size_map_min) {
                         need_add = false;
