@@ -528,27 +528,22 @@ void map_incremental()
             {
                 const PointVector &points_near = Nearest_Points[i];
                 bool need_add = true;
-                BoxPointType Box_of_Point;
                 PointType downsample_result, mid_point; 
                 mid_point.x = floor(feats_down_world->points[i].x/filter_size_map_min)*filter_size_map_min + 0.5 * filter_size_map_min;
                 mid_point.y = floor(feats_down_world->points[i].y/filter_size_map_min)*filter_size_map_min + 0.5 * filter_size_map_min;
                 mid_point.z = floor(feats_down_world->points[i].z/filter_size_map_min)*filter_size_map_min + 0.5 * filter_size_map_min;
                 /* If the nearest points is definitely outside the downsample box */
-                if (fabs(points_near[0].x - mid_point.x) > 0.5 * filter_size_map_min && fabs(points_near[0].y - mid_point.y) > 0.5 * filter_size_map_min && fabs(points_near[0].z - mid_point.z) > 0.5 * filter_size_map_min){
+                if (fabs(points_near[0].x - mid_point.x) > 1.732 * filter_size_map_min || fabs(points_near[0].y - mid_point.y) > 1.732 * filter_size_map_min || fabs(points_near[0].z - mid_point.z) > 1.732 * filter_size_map_min){
                     PointNoNeedDownsample.emplace_back(feats_down_world->points[i]);
                     continue;
                 }
                 /* Check if there is a point already in the downsample box and closer to the center point */
                 float dist  = calc_dist<float>(feats_down_world->points[i],mid_point);
-                for (int readd_i = 0; readd_i < NUM_MATCH_POINTS; readd_i ++)
+                for (int readd_i = 0; readd_i < points_near.size(); readd_i ++)
                 {
-                    if (points_near.size() < NUM_MATCH_POINTS) break;
+                    // if (points_near.size() < NUM_MATCH_POINTS) break;
                     /* Those points which are outside the downsample box should not be considered. */
-                    // if (fabs(points_near[readd_i].x - mid_point.x) > 0.5 * filter_size_map_min || fabs(points_near[readd_i].y - mid_point.y) > 0.5 * filter_size_map_min || fabs(points_near[readd_i].z - mid_point.z) > 0.5 * filter_size_map_min) {
-                    //     continue;                    
-                    // }
-                    if (calc_dist<float>(points_near[readd_i], mid_point) < dist)
-                    {
+                    if (fabs(points_near[readd_i].x - mid_point.x) < 0.5 * filter_size_map_min && fabs(points_near[readd_i].y - mid_point.y) < 0.5 * filter_size_map_min && fabs(points_near[readd_i].z - mid_point.z) < 0.5 * filter_size_map_min) {
                         need_add = false;
                         break;
                     }
@@ -557,10 +552,11 @@ void map_incremental()
             }
             else
             {
-                PointToAdd.emplace_back(feats_down_world->points[i]);
+                // PointToAdd.emplace_back(feats_down_world->points[i]);
+                PointNoNeedDownsample.emplace_back(feats_down_world->points[i]);
             }
         }
-    int add_point_size = ikdtree.Add_Points(PointToAdd, true);
+    // int add_point_size = ikdtree.Add_Points(PointToAdd, true);
     ikdtree.Add_Points(PointNoNeedDownsample, false);
 }
 
