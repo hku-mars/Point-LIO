@@ -1,4 +1,4 @@
-# Point-LIO (Ubuntu 18.04 has environment problems for Point-LIO, please use Ubuntu 20.04 and above)
+# Point-LIO (If you have problems with the formal commits, please try the newest commit first, several modifications have be made in newest commit for wider adaptivity)
 ## Point-LIO: Robust High-Bandwidth Lidar-Inertial Odometry (Pay attention to modifying the parameters for IMU in .yaml file, according to the IMU you use.)
 
 ## 1. Introduction
