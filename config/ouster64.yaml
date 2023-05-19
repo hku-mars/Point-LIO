@@ -10,9 +10,9 @@ common:
 
 preprocess:
     lidar_type: 3 # 2 #velodyne                # 1 Livox Avia LiDAR
-    scan_line: 64 # 32 #velodyne 6 avia
+    scan_line: 32 # 32 #velodyne 6 avia
     timestamp_unit: 3           # the unit of time/t field in the PointCloud2 rostopic: 0-second, 1-milisecond, 2-microsecond, 3-nanosecond.
-    blind: 4.0
+    blind: 0.20
 
 mapping:
     imu_en: true

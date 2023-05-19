@@ -547,7 +547,7 @@ void map_incremental()
                 PointNoNeedDownsample.emplace_back(feats_down_world->points[i]);
             }
         }
-    // int add_point_size = ikdtree.Add_Points(PointToAdd, true);
+    int add_point_size = ikdtree.Add_Points(PointToAdd, true);
     ikdtree.Add_Points(PointNoNeedDownsample, false);
 }
 

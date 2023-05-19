@@ -155,9 +155,9 @@ void ImuProcess::Set_init(Eigen::Vector3d &tmp_gravity, Eigen::Matrix3d &rot)
   hat_grav << 0.0, gravity_(2), -gravity_(1),
               -gravity_(2), 0.0, gravity_(0),
               gravity_(1), -gravity_(0), 0.0;
-  double align_norm = (hat_grav * tmp_gravity).norm() / gravity_.norm() / gravity_.norm();
+  double align_norm = (hat_grav * tmp_gravity).norm() / tmp_gravity.norm() / gravity_.norm();
   double align_cos = gravity_.transpose() * tmp_gravity;
-  align_cos = align_cos / gravity_.norm() / gravity_.norm();
+  align_cos = align_cos / gravity_.norm() / tmp_gravity.norm();
   if (align_norm < 1e-6)
   {
     if (align_cos > 1e-6)
