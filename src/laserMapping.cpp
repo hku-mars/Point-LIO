@@ -856,14 +856,19 @@ int main(int argc, char** argv)
                         imu_deque.pop_front();
                         // imu_deque.pop();
                     }
-                    // state_in.gravity << VEC_FROM_ARRAY(gravity_init);
-                    // state_out.gravity << VEC_FROM_ARRAY(gravity_init);
-                    // state_out.acc << VEC_FROM_ARRAY(gravity_init);
-                    // state_out.acc *= -1;
-
-                    state_in.gravity =  -1 * p_imu->mean_acc * G_m_s2 / acc_norm; 
-                    state_out.gravity = -1 * p_imu->mean_acc * G_m_s2 / acc_norm; 
-                    state_out.acc = p_imu->mean_acc * G_m_s2 / acc_norm;
+                    if (non_station_start)
+                    {
+                        state_in.gravity << VEC_FROM_ARRAY(gravity_init);
+                        state_out.gravity << VEC_FROM_ARRAY(gravity_init);
+                        state_out.acc << VEC_FROM_ARRAY(gravity_init);
+                        state_out.acc *= -1;
+                    }
+                    else
+                    {
+                        state_in.gravity =  -1 * p_imu->mean_acc * G_m_s2 / acc_norm; 
+                        state_out.gravity = -1 * p_imu->mean_acc * G_m_s2 / acc_norm; 
+                        state_out.acc = p_imu->mean_acc * G_m_s2 / acc_norm;
+                    }
                     if (gravity_align)
                     {
                         Eigen::Matrix3d rot_init;

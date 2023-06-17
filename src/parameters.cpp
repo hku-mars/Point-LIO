@@ -14,7 +14,7 @@ float  plane_thr;
 double filter_size_surf_min, filter_size_map_min, fov_deg;
 double cube_len; 
 float  DET_RANGE;
-bool   imu_en, gravity_align;
+bool   imu_en, gravity_align, non_station_start;
 double imu_time_inte;
 double laser_point_cov, acc_norm;
 double vel_cov, acc_cov_input, gyr_cov_input;
@@ -55,6 +55,7 @@ void readParameters(ros::NodeHandle &nh)
   nh.param<float>("mapping/det_range",DET_RANGE,300.f);
   nh.param<double>("mapping/fov_degree",fov_deg,180);
   nh.param<bool>("mapping/imu_en",imu_en,true);
+  nh.param<bool>("mapping/start_in_aggressive_motion",non_station_start,false);
   nh.param<bool>("mapping/extrinsic_est_en",extrinsic_est_en,true);
   nh.param<double>("mapping/imu_time_inte",imu_time_inte,0.005);
   nh.param<double>("mapping/lidar_meas_cov",laser_point_cov,0.1);
