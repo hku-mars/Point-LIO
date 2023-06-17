@@ -36,6 +36,8 @@ git clone --branch throttle-tf-repeated-data-error git@github.com:BadgerTechnolo
 
 Then rebuild, source setup.bash, run and then it should be reduced down to once every 10 seconds. If 10 seconds is still too much log output then change the ros::Duration(10.0) to 10000 seconds or whatever you like.
 
+F. If you want to use Point-LIO without imu, set the "imu_en" as false, and provide a predefined value of gavity in "gravity_init" as true as possible in the yaml file, and keep the "use_imu_as_input" as 0.
+
 ## **1.1. Developers:**
 The codes of this repo are contributed by:
 [Dongjiao He (贺东娇)](https://github.com/Joanna-HE) and [Wei Xu (徐威)](https://github.com/XW-HKU)
