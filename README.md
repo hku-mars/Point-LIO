@@ -179,7 +179,7 @@ The example datasets could be downloaded through [onedrive](https://connecthkuhk
 <img src="https://github.com/hku-mars/Point-LIO/raw/master/image/example4.gif"  width="35%" />
 </div>
 
-PULSAR is a self-rotating actuated by only one motor, [PULSAR](https://github.com/hku-mars/PULSAR)
+PULSAR is a self-rotating UAV actuated by only one motor, [PULSAR](https://github.com/hku-mars/PULSAR)
 
 ## 7. Contact us
 If you have any questions about this work, please feel free to contact me <hdj65822ATconnect.hku.hk> and Dr. Fu Zhang <fuzhangAThku.hk> via email.
