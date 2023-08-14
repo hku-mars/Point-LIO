@@ -1,6 +1,4 @@
-# Point-LIO (If you have problems with the formal commits, please try the newest commit first, several modifications have be made in newest commit for wider adaptivity)
-## Point-LIO: Robust High-Bandwidth Lidar-Inertial Odometry (Pay attention to modifying the parameters for IMU in .yaml file, according to the IMU you use.)
-
+# Point-LIO
 ## 1. Introduction
 
 <div align="center">
