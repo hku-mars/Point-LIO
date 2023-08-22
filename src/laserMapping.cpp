@@ -889,9 +889,25 @@ int main(int argc, char** argv)
                 if (!p_imu->gravity_align_)
                 {
                     state_in.gravity << VEC_FROM_ARRAY(gravity_init);
-                    state_out.gravity << VEC_FROM_ARRAY(gravity_init);
-                    state_out.acc << VEC_FROM_ARRAY(gravity_init);
-                    state_out.acc *= -1;
+                    if (gravity_align)
+                    {
+                        Eigen::Matrix3d rot_init;
+                        p_imu->gravity_ << VEC_FROM_ARRAY(gravity);
+                        p_imu->Set_init(state_in.gravity, rot_init);
+                        state_out.gravity = p_imu->gravity_;
+                        state_out.rot = rot_init;
+                        // state_in.rot.normalize();
+                        state_out.rot.normalize();
+                        state_out.acc = -rot_init.transpose() * state_out.gravity;
+                    }
+                    else
+                    {
+                        state_out.gravity << VEC_FROM_ARRAY(gravity_init);
+                        state_out.acc << VEC_FROM_ARRAY(gravity_init);
+                        state_out.acc *= -1;
+                    }
+                    // kf_input.change_x(state_in);
+                    kf_output.change_x(state_out);
                 }
             }
             /*** Segment the map in lidar FOV ***/
@@ -1081,7 +1097,7 @@ int main(int argc, char** argv)
                     if(prop_at_freq_of_imu)
                     {
                         double dt_cov = time_current - time_update_last;
-                        if (!imu_en && (dt_cov >= imu_time_inte)) // (point_cov_not_prop && imu_prop_cov)
+                        if ((dt_cov >= imu_time_inte)) // (point_cov_not_prop && imu_prop_cov)
                         {
                             double propag_cov_start = omp_get_wtime();
                             kf_output.predict(dt_cov, Q_output, input_in, false, true);
