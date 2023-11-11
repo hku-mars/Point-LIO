@@ -525,7 +525,7 @@ void map_incremental()
             mid_point.y = floor(feats_down_world->points[i].y/filter_size_map_min)*filter_size_map_min + 0.5 * filter_size_map_min;
             mid_point.z = floor(feats_down_world->points[i].z/filter_size_map_min)*filter_size_map_min + 0.5 * filter_size_map_min;
                 /* If the nearest points is definitely outside the downsample box */
-                if (fabs(points_near[0].x - mid_point.x) > 0.866 * filter_size_map_min || fabs(points_near[0].y - mid_point.y) > 0.866 * filter_size_map_min || fabs(points_near[0].z - mid_point.z) > 1.732 * filter_size_map_min){
+                if (fabs(points_near[0].x - mid_point.x) > 0.866 * filter_size_map_min || fabs(points_near[0].y - mid_point.y) > 0.866 * filter_size_map_min || fabs(points_near[0].z - mid_point.z) > 0.866 * filter_size_map_min){
                     PointNoNeedDownsample.emplace_back(feats_down_world->points[i]);
                 continue;
             }
@@ -883,7 +883,6 @@ int main(int argc, char** argv)
                         state_out.rot = rot_init;
                         // state_in.rot.normalize();
                         // state_out.rot.normalize();
-                        cout << "grav:" << state_out.gravity.transpose() << ";" << rot_init << endl;
                         state_out.acc = -rot_init.transpose() * state_out.gravity;
                     }
                     kf_input.change_x(state_in);
