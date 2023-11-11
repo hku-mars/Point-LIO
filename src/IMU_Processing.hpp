@@ -61,7 +61,7 @@ ImuProcess::ImuProcess()
 {
   imu_en = true;
   init_iter_num = 1;
-  mean_acc      = V3D(0, 0, -1.0);
+  mean_acc      = V3D(0, 0, 0.0);
   mean_gyr      = V3D(0, 0, 0);
 }
 
@@ -70,7 +70,7 @@ ImuProcess::~ImuProcess() {}
 void ImuProcess::Reset() 
 {
   ROS_WARN("Reset ImuProcess");
-  mean_acc      = V3D(0, 0, -1.0);
+  mean_acc      = V3D(0, 0, 0.0);
   mean_gyr      = V3D(0, 0, 0);
   imu_need_init_    = true;
   init_iter_num     = 1;
@@ -130,16 +130,20 @@ void ImuProcess::Process(const MeasureGroup &meas, PointCloudXYZI::Ptr cur_pcl_u
       }
       return;
     }
-    if (!gravity_align_) gravity_align_ = true;
+    // if (!gravity_align_) gravity_align_ = true;
     *cur_pcl_un_ = *(meas.lidar);
     return;
   }
   else
   {
-    if (!b_first_frame_) 
-    {if (!gravity_align_) gravity_align_ = true;}
-    else
-    {b_first_frame_ = false;
+    // if (!b_first_frame_) 
+    // {if (!gravity_align_) gravity_align_ = true;}
+    // else
+    // {b_first_frame_ = false;
+    // }
+    if (imu_need_init_)
+    {
+      imu_need_init_ = false;
     }
     *cur_pcl_un_ = *(meas.lidar);
     return;

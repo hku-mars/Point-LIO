@@ -69,7 +69,7 @@ Eigen::Matrix<double, 24, 1> get_f_input(state_input &s, const input_ikfom &in)
 	Eigen::Matrix<double, 24, 1> res = Eigen::Matrix<double, 24, 1>::Zero();
 	vect3 omega;
 	in.gyro.boxminus(omega, s.bg);
-	vect3 a_inertial = s.rot.normalized() * (in.acc-s.ba); 
+	vect3 a_inertial = s.rot * (in.acc-s.ba); 
 	for(int i = 0; i < 3; i++ ){
 		res(i) = s.vel[i];
 		res(i + 3) =  omega[i]; 
@@ -81,7 +81,7 @@ Eigen::Matrix<double, 24, 1> get_f_input(state_input &s, const input_ikfom &in)
 Eigen::Matrix<double, 30, 1> get_f_output(state_output &s, const input_ikfom &in)
 {
 	Eigen::Matrix<double, 30, 1> res = Eigen::Matrix<double, 30, 1>::Zero();
-	vect3 a_inertial = s.rot.normalized() * s.acc; 
+	vect3 a_inertial = s.rot * s.acc; 
 	for(int i = 0; i < 3; i++ ){
 		res(i) = s.vel[i];
 		res(i + 3) = s.omg[i]; 
@@ -98,8 +98,8 @@ Eigen::Matrix<double, 24, 24> df_dx_input(state_input &s, const input_ikfom &in)
 	in.acc.boxminus(acc_, s.ba);
 	vect3 omega;
 	in.gyro.boxminus(omega, s.bg);
-	cov.template block<3, 3>(12, 3) = -s.rot.normalized().toRotationMatrix()*MTK::hat(acc_);
-	cov.template block<3, 3>(12, 18) = -s.rot.normalized().toRotationMatrix();
+	cov.template block<3, 3>(12, 3) = -s.rot*MTK::hat(acc_);
+	cov.template block<3, 3>(12, 18) = -s.rot;
 	// Eigen::Matrix<state_ikfom::scalar, 2, 1> vec = Eigen::Matrix<state_ikfom::scalar, 2, 1>::Zero();
 	// Eigen::Matrix<state_ikfom::scalar, 3, 2> grav_matrix;
 	// s.S2_Mx(grav_matrix, vec, 21);
@@ -122,8 +122,8 @@ Eigen::Matrix<double, 30, 30> df_dx_output(state_output &s, const input_ikfom &i
 {
 	Eigen::Matrix<double, 30, 30> cov = Eigen::Matrix<double, 30, 30>::Zero();
 	cov.template block<3, 3>(0, 12) = Eigen::Matrix3d::Identity();
-	cov.template block<3, 3>(12, 3) = -s.rot.normalized().toRotationMatrix()*MTK::hat(s.acc);
-	cov.template block<3, 3>(12, 18) = s.rot.normalized().toRotationMatrix();
+	cov.template block<3, 3>(12, 3) = -s.rot*MTK::hat(s.acc);
+	cov.template block<3, 3>(12, 18) = s.rot;
 	// Eigen::Matrix<state_ikfom::scalar, 2, 1> vec = Eigen::Matrix<state_ikfom::scalar, 2, 1>::Zero();
 	// Eigen::Matrix<state_ikfom::scalar, 3, 2> grav_matrix;
 	// s.S2_Mx(grav_matrix, vec, 21);
@@ -143,39 +143,56 @@ Eigen::Matrix<double, 30, 30> df_dx_output(state_output &s, const input_ikfom &i
 // 	return cov;
 // }
 
-vect3 SO3ToEuler(const SO3 &orient) 
+vect3 SO3ToEuler(const SO3 &rot) 
 {
-	Eigen::Matrix<double, 3, 1> _ang;
-	Eigen::Vector4d q_data = orient.coeffs().transpose();
-	//scalar w=orient.coeffs[3], x=orient.coeffs[0], y=orient.coeffs[1], z=orient.coeffs[2];
-	double sqw = q_data[3]*q_data[3];
-	double sqx = q_data[0]*q_data[0];
-	double sqy = q_data[1]*q_data[1];
-	double sqz = q_data[2]*q_data[2];
-	double unit = sqx + sqy + sqz + sqw; // if normalized is one, otherwise is correction factor
-	double test = q_data[3]*q_data[1] - q_data[2]*q_data[0];
+	// Eigen::Matrix<double, 3, 1> _ang;
+	// Eigen::Vector4d q_data = orient.coeffs().transpose();
+	// //scalar w=orient.coeffs[3], x=orient.coeffs[0], y=orient.coeffs[1], z=orient.coeffs[2];
+	// double sqw = q_data[3]*q_data[3];
+	// double sqx = q_data[0]*q_data[0];
+	// double sqy = q_data[1]*q_data[1];
+	// double sqz = q_data[2]*q_data[2];
+	// double unit = sqx + sqy + sqz + sqw; // if normalized is one, otherwise is correction factor
+	// double test = q_data[3]*q_data[1] - q_data[2]*q_data[0];
 
-	if (test > 0.49999*unit) { // singularity at north pole
+	// if (test > 0.49999*unit) { // singularity at north pole
 	
-		_ang << 2 * std::atan2(q_data[0], q_data[3]), M_PI/2, 0;
-		double temp[3] = {_ang[0] * 57.3, _ang[1] * 57.3, _ang[2] * 57.3};
-		vect3 euler_ang(temp, 3);
-		return euler_ang;
-	}
-	if (test < -0.49999*unit) { // singularity at south pole
-		_ang << -2 * std::atan2(q_data[0], q_data[3]), -M_PI/2, 0;
-		double temp[3] = {_ang[0] * 57.3, _ang[1] * 57.3, _ang[2] * 57.3};
-		vect3 euler_ang(temp, 3);
-		return euler_ang;
-	}
+	// 	_ang << 2 * std::atan2(q_data[0], q_data[3]), M_PI/2, 0;
+	// 	double temp[3] = {_ang[0] * 57.3, _ang[1] * 57.3, _ang[2] * 57.3};
+	// 	vect3 euler_ang(temp, 3);
+	// 	return euler_ang;
+	// }
+	// if (test < -0.49999*unit) { // singularity at south pole
+	// 	_ang << -2 * std::atan2(q_data[0], q_data[3]), -M_PI/2, 0;
+	// 	double temp[3] = {_ang[0] * 57.3, _ang[1] * 57.3, _ang[2] * 57.3};
+	// 	vect3 euler_ang(temp, 3);
+	// 	return euler_ang;
+	// }
 		
-	_ang <<
-			std::atan2(2*q_data[0]*q_data[3]+2*q_data[1]*q_data[2] , -sqx - sqy + sqz + sqw),
-			std::asin (2*test/unit),
-			std::atan2(2*q_data[2]*q_data[3]+2*q_data[1]*q_data[0] , sqx - sqy - sqz + sqw);
-	double temp[3] = {_ang[0] * 57.3, _ang[1] * 57.3, _ang[2] * 57.3};
-	vect3 euler_ang(temp, 3);
-	return euler_ang;
+	// _ang <<
+	// 		std::atan2(2*q_data[0]*q_data[3]+2*q_data[1]*q_data[2] , -sqx - sqy + sqz + sqw),
+	// 		std::asin (2*test/unit),
+	// 		std::atan2(2*q_data[2]*q_data[3]+2*q_data[1]*q_data[0] , sqx - sqy - sqz + sqw);
+	// double temp[3] = {_ang[0] * 57.3, _ang[1] * 57.3, _ang[2] * 57.3};
+	// vect3 euler_ang(temp, 3);
+	// return euler_ang;
+	double sy = sqrt(rot(0,0)*rot(0,0) + rot(1,0)*rot(1,0));
+    bool singular = sy < 1e-6;
+    double x, y, z;
+    if(!singular)
+    {
+        x = atan2(rot(2, 1), rot(2, 2));
+        y = atan2(-rot(2, 0), sy);   
+        z = atan2(rot(1, 0), rot(0, 0));  
+    }
+    else
+    {    
+        x = atan2(-rot(1, 2), rot(1, 1));    
+        y = atan2(-rot(2, 0), sy);    
+        z = 0;
+    }
+    Eigen::Matrix<double, 3, 1> ang(x, y, z);
+    return ang;
 }
 
 void h_model_input(state_input &s, esekfom::dyn_share_modified<double> &ekfom_data)
@@ -243,17 +260,17 @@ void h_model_input(state_input &s, esekfom::dyn_share_modified<double> &ekfom_da
 				V3D p_body = pbody_list[idx+j+1];
 				M3D p_crossmat, p_imu_crossmat;
 				p_crossmat << SKEW_SYM_MATRX(p_body);
-				V3D point_imu = s.offset_R_L_I.normalized() * p_body + s.offset_T_L_I;
+				V3D point_imu = s.offset_R_L_I * p_body + s.offset_T_L_I;
 				p_imu_crossmat << SKEW_SYM_MATRX(point_imu);
-				V3D C(s.rot.conjugate().normalized() * norm_vec);
+				V3D C(s.rot.transpose() * norm_vec);
 				V3D A(p_imu_crossmat * C);
-				V3D B(p_crossmat * s.offset_R_L_I.conjugate().normalized() * C);
+				V3D B(p_crossmat * s.offset_R_L_I.transpose() * C);
 				ekfom_data.h_x.block<1, 12>(m, 0) << norm_vec(0), norm_vec(1), norm_vec(2), VEC_FROM_ARRAY(A), VEC_FROM_ARRAY(B), VEC_FROM_ARRAY(C);
 			}
 			else
 			{   
 				M3D point_crossmat = crossmat_list[idx+j+1];
-				V3D C(s.rot.conjugate().normalized() * norm_vec);
+				V3D C(s.rot.transpose() * norm_vec);
 				V3D A(point_crossmat * C);
 				ekfom_data.h_x.block<1, 12>(m, 0) << norm_vec(0), norm_vec(1), norm_vec(2), VEC_FROM_ARRAY(A), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
 			}
@@ -330,17 +347,17 @@ void h_model_output(state_output &s, esekfom::dyn_share_modified<double> &ekfom_
 				V3D p_body = pbody_list[idx+j+1];
 				M3D p_crossmat, p_imu_crossmat;
 				p_crossmat << SKEW_SYM_MATRX(p_body);
-				V3D point_imu = s.offset_R_L_I.normalized() * p_body + s.offset_T_L_I;
+				V3D point_imu = s.offset_R_L_I * p_body + s.offset_T_L_I;
 				p_imu_crossmat << SKEW_SYM_MATRX(point_imu);
-				V3D C(s.rot.conjugate().normalized() * norm_vec);
+				V3D C(s.rot.transpose() * norm_vec);
 				V3D A(p_imu_crossmat * C);
-				V3D B(p_crossmat * s.offset_R_L_I.conjugate().normalized() * C);
+				V3D B(p_crossmat * s.offset_R_L_I.transpose() * C);
 				ekfom_data.h_x.block<1, 12>(m, 0) << norm_vec(0), norm_vec(1), norm_vec(2), VEC_FROM_ARRAY(A), VEC_FROM_ARRAY(B), VEC_FROM_ARRAY(C);
 			}
 			else
 			{   
 				M3D point_crossmat = crossmat_list[idx+j+1];
-				V3D C(s.rot.conjugate().normalized() * norm_vec);
+				V3D C(s.rot.transpose() * norm_vec);
 				V3D A(point_crossmat * C);
 				// V3D A(point_crossmat * state.rot_end.transpose() * norm_vec);
 				ekfom_data.h_x.block<1, 12>(m, 0) << norm_vec(0), norm_vec(1), norm_vec(2), VEC_FROM_ARRAY(A), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
@@ -407,22 +424,22 @@ void pointBodyToWorld(PointType const * const pi, PointType * const po)
 	{	
 		if (!use_imu_as_input)
 		{
-			p_global = kf_output.x_.rot.normalized() * (kf_output.x_.offset_R_L_I.normalized() * p_body + kf_output.x_.offset_T_L_I) + kf_output.x_.pos;
+			p_global = kf_output.x_.rot * (kf_output.x_.offset_R_L_I * p_body + kf_output.x_.offset_T_L_I) + kf_output.x_.pos;
 		}
 		else
 		{
-			p_global = kf_input.x_.rot.normalized() * (kf_input.x_.offset_R_L_I.normalized() * p_body + kf_input.x_.offset_T_L_I) + kf_input.x_.pos;
+			p_global = kf_input.x_.rot * (kf_input.x_.offset_R_L_I * p_body + kf_input.x_.offset_T_L_I) + kf_input.x_.pos;
 		}
 	}
 	else
 	{
 		if (!use_imu_as_input)
 		{
-			p_global = kf_output.x_.rot.normalized() * (Lidar_R_wrt_IMU * p_body + Lidar_T_wrt_IMU) + kf_output.x_.pos;
+			p_global = kf_output.x_.rot * (Lidar_R_wrt_IMU * p_body + Lidar_T_wrt_IMU) + kf_output.x_.pos;
 		}
 		else
 		{
-			p_global = kf_input.x_.rot.normalized() * (Lidar_R_wrt_IMU * p_body + Lidar_T_wrt_IMU) + kf_input.x_.pos;
+			p_global = kf_input.x_.rot * (Lidar_R_wrt_IMU * p_body + Lidar_T_wrt_IMU) + kf_input.x_.pos;
 		}
 	}
 

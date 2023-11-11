@@ -130,11 +130,11 @@ void pointBodyLidarToIMU(PointType const * const pi, PointType * const po)
     {
         if (!use_imu_as_input)
         {
-            p_body_imu = kf_output.x_.offset_R_L_I.normalized() * p_body_lidar + kf_output.x_.offset_T_L_I;
+            p_body_imu = kf_output.x_.offset_R_L_I * p_body_lidar + kf_output.x_.offset_T_L_I;
         }
         else
         {
-            p_body_imu = kf_input.x_.offset_R_L_I.normalized() * p_body_lidar + kf_input.x_.offset_T_L_I;
+            p_body_imu = kf_input.x_.offset_R_L_I * p_body_lidar + kf_input.x_.offset_T_L_I;
         }
     }
     else
@@ -165,11 +165,11 @@ void lasermap_fov_segment()
     V3D pos_LiD;
     if (use_imu_as_input)
     {
-        pos_LiD = kf_input.x_.pos + kf_input.x_.rot.normalized() * Lidar_T_wrt_IMU;
+        pos_LiD = kf_input.x_.pos + kf_input.x_.rot * Lidar_T_wrt_IMU;
     }
     else
     {
-        pos_LiD = kf_output.x_.pos + kf_output.x_.rot.normalized() * Lidar_T_wrt_IMU;
+        pos_LiD = kf_output.x_.pos + kf_output.x_.rot * Lidar_T_wrt_IMU;
     }
     if (!Localmap_Initialized){
         for (int i = 0; i < 3; i++){
@@ -517,35 +517,35 @@ void map_incremental()
         for(int i = 0; i < feats_down_size; i++)
         {            
             if (!Nearest_Points[i].empty())
-            {
-                const PointVector &points_near = Nearest_Points[i];
-                bool need_add = true;
-                PointType downsample_result, mid_point; 
-                mid_point.x = floor(feats_down_world->points[i].x/filter_size_map_min)*filter_size_map_min + 0.5 * filter_size_map_min;
-                mid_point.y = floor(feats_down_world->points[i].y/filter_size_map_min)*filter_size_map_min + 0.5 * filter_size_map_min;
-                mid_point.z = floor(feats_down_world->points[i].z/filter_size_map_min)*filter_size_map_min + 0.5 * filter_size_map_min;
+        {
+            const PointVector &points_near = Nearest_Points[i];
+            bool need_add = true;
+            PointType downsample_result, mid_point; 
+            mid_point.x = floor(feats_down_world->points[i].x/filter_size_map_min)*filter_size_map_min + 0.5 * filter_size_map_min;
+            mid_point.y = floor(feats_down_world->points[i].y/filter_size_map_min)*filter_size_map_min + 0.5 * filter_size_map_min;
+            mid_point.z = floor(feats_down_world->points[i].z/filter_size_map_min)*filter_size_map_min + 0.5 * filter_size_map_min;
                 /* If the nearest points is definitely outside the downsample box */
-                if (fabs(points_near[0].x - mid_point.x) > 1.732 * filter_size_map_min || fabs(points_near[0].y - mid_point.y) > 1.732 * filter_size_map_min || fabs(points_near[0].z - mid_point.z) > 1.732 * filter_size_map_min){
+                if (fabs(points_near[0].x - mid_point.x) > 0.866 * filter_size_map_min || fabs(points_near[0].y - mid_point.y) > 0.866 * filter_size_map_min || fabs(points_near[0].z - mid_point.z) > 1.732 * filter_size_map_min){
                     PointNoNeedDownsample.emplace_back(feats_down_world->points[i]);
-                    continue;
-                }
+                continue;
+            }
                 /* Check if there is a point already in the downsample box */
                 float dist  = calc_dist<float>(feats_down_world->points[i],mid_point);
                 for (int readd_i = 0; readd_i < points_near.size(); readd_i ++)
-                {
+            {
                     /* Those points which are outside the downsample box should not be considered. */
                     if (fabs(points_near[readd_i].x - mid_point.x) < 0.5 * filter_size_map_min && fabs(points_near[readd_i].y - mid_point.y) < 0.5 * filter_size_map_min && fabs(points_near[readd_i].z - mid_point.z) < 0.5 * filter_size_map_min) {
-                        need_add = false;
-                        break;
-                    }
+                    need_add = false;
+                    break;
                 }
-                if (need_add) PointToAdd.emplace_back(feats_down_world->points[i]);
             }
-            else
-            {
+                if (need_add) PointToAdd.emplace_back(feats_down_world->points[i]);
+        }
+        else
+        {
                 // PointToAdd.emplace_back(feats_down_world->points[i]);
                 PointNoNeedDownsample.emplace_back(feats_down_world->points[i]);
-            }
+        }
         }
     int add_point_size = ikdtree.Add_Points(PointToAdd, true);
     ikdtree.Add_Points(PointNoNeedDownsample, false);
@@ -659,20 +659,22 @@ void set_posestamp(T & out)
         out.position.x = kf_output.x_.pos(0);
         out.position.y = kf_output.x_.pos(1);
         out.position.z = kf_output.x_.pos(2);
-        out.orientation.x = kf_output.x_.rot.coeffs()[0];
-        out.orientation.y = kf_output.x_.rot.coeffs()[1];
-        out.orientation.z = kf_output.x_.rot.coeffs()[2];
-        out.orientation.w = kf_output.x_.rot.coeffs()[3];
+        Eigen::Quaterniond q(kf_output.x_.rot);
+        out.orientation.x = q.coeffs()[0];
+        out.orientation.y = q.coeffs()[1];
+        out.orientation.z = q.coeffs()[2];
+        out.orientation.w = q.coeffs()[3];
     }
     else
     {
         out.position.x = kf_input.x_.pos(0);
         out.position.y = kf_input.x_.pos(1);
         out.position.z = kf_input.x_.pos(2);
-        out.orientation.x = kf_input.x_.rot.coeffs()[0];
-        out.orientation.y = kf_input.x_.rot.coeffs()[1];
-        out.orientation.z = kf_input.x_.rot.coeffs()[2];
-        out.orientation.w = kf_input.x_.rot.coeffs()[3];
+        Eigen::Quaterniond q(kf_output.x_.rot);
+        out.orientation.x = q.coeffs()[0];
+        out.orientation.y = q.coeffs()[1];
+        out.orientation.z = q.coeffs()[2];
+        out.orientation.w = q.coeffs()[3];
     }
 }
 
@@ -841,7 +843,8 @@ int main(int argc, char** argv)
             
             p_imu->Process(Measures, feats_undistort);
 
-            if (feats_undistort->empty() || feats_undistort == NULL)
+            // if (feats_undistort->empty() || feats_undistort == NULL)
+            if (p_imu->imu_need_init_)
             {
                 continue;
             }
@@ -874,14 +877,18 @@ int main(int argc, char** argv)
                         Eigen::Matrix3d rot_init;
                         p_imu->gravity_ << VEC_FROM_ARRAY(gravity);
                         p_imu->Set_init(state_in.gravity, rot_init);
-                        state_in.gravity = state_out.gravity = p_imu->gravity_;
-                        state_in.rot = state_out.rot = rot_init;
-                        state_in.rot.normalize();
-                        state_out.rot.normalize();
+                        state_in.gravity = p_imu->gravity_;
+                        state_out.gravity = p_imu->gravity_;
+                        state_in.rot = rot_init;
+                        state_out.rot = rot_init;
+                        // state_in.rot.normalize();
+                        // state_out.rot.normalize();
+                        cout << "grav:" << state_out.gravity.transpose() << ";" << rot_init << endl;
                         state_out.acc = -rot_init.transpose() * state_out.gravity;
                     }
                     kf_input.change_x(state_in);
                     kf_output.change_x(state_out);
+                    p_imu->gravity_align_ = true;
                 }
             }
             else
@@ -897,7 +904,7 @@ int main(int argc, char** argv)
                         state_out.gravity = p_imu->gravity_;
                         state_out.rot = rot_init;
                         // state_in.rot.normalize();
-                        state_out.rot.normalize();
+                        // state_out.rot.normalize();
                         state_out.acc = -rot_init.transpose() * state_out.gravity;
                     }
                     else
@@ -908,6 +915,7 @@ int main(int argc, char** argv)
                     }
                     // kf_input.change_x(state_in);
                     kf_output.change_x(state_out);
+                    p_imu->gravity_align_ = true;
                 }
             }
             /*** Segment the map in lidar FOV ***/
@@ -973,11 +981,11 @@ int main(int argc, char** argv)
                 {
                     if (!use_imu_as_input)
                     {
-                        point_this = kf_output.x_.offset_R_L_I.normalized() * point_this + kf_output.x_.offset_T_L_I;
+                        point_this = kf_output.x_.offset_R_L_I * point_this + kf_output.x_.offset_T_L_I;
                     }
                     else
                     {
-                        point_this = kf_input.x_.offset_R_L_I.normalized() * point_this + kf_input.x_.offset_T_L_I;
+                        point_this = kf_input.x_.offset_R_L_I * point_this + kf_input.x_.offset_T_L_I;
                     }
                 }
                 else
@@ -991,7 +999,7 @@ int main(int argc, char** argv)
             
             if (!use_imu_as_input)
             {     
-                bool imu_upda_cov = false;
+                // bool imu_upda_cov = false;
                 effct_feat_num = 0;
                 /**** point by point update ****/
 
@@ -1019,7 +1027,7 @@ int main(int argc, char** argv)
                             acc_avr   <<imu_last.linear_acceleration.x, imu_last.linear_acceleration.y, imu_last.linear_acceleration.z;
                         }
                         is_first_frame = false;
-                        imu_upda_cov = true;
+                        // imu_upda_cov = true;
                         time_update_last = time_current;
                         time_predict_last_const = time_current;
                     }
@@ -1028,7 +1036,7 @@ int main(int argc, char** argv)
                         bool imu_comes = time_current > imu_next.header.stamp.toSec();
                         while (imu_comes) 
                         {
-                            imu_upda_cov = true;
+                            // imu_upda_cov = true;
                             angvel_avr<<imu_next.angular_velocity.x, imu_next.angular_velocity.y, imu_next.angular_velocity.z;
                             acc_avr   <<imu_next.linear_acceleration.x, imu_next.linear_acceleration.y, imu_next.linear_acceleration.z;
 
@@ -1037,7 +1045,7 @@ int main(int argc, char** argv)
                             imu_next = *(imu_deque.front());
                             imu_deque.pop_front();
                             double dt = imu_last.header.stamp.toSec() - time_predict_last_const;
-                            kf_output.predict(dt, Q_output, input_in, true, false);
+                                kf_output.predict(dt, Q_output, input_in, true, false);
                             time_predict_last_const = imu_last.header.stamp.toSec(); // big problem
                             imu_comes = time_current > imu_next.header.stamp.toSec();
                             // if (!imu_comes)
@@ -1071,7 +1079,7 @@ int main(int argc, char** argv)
                             time_update_last = time_current;   
                         }
                     }
-                    kf_output.predict(dt, Q_output, input_in, true, false);
+                        kf_output.predict(dt, Q_output, input_in, true, false);
                     propag_time += omp_get_wtime() - propag_state_start;
                     time_predict_last_const = time_current;
                     // if(k == 0)
@@ -1094,18 +1102,18 @@ int main(int argc, char** argv)
                         continue;
                     }
 
-                    if(prop_at_freq_of_imu)
-                    {
-                        double dt_cov = time_current - time_update_last;
-                        if ((dt_cov >= imu_time_inte)) // (point_cov_not_prop && imu_prop_cov)
-                        {
-                            double propag_cov_start = omp_get_wtime();
-                            kf_output.predict(dt_cov, Q_output, input_in, false, true);
-                            imu_upda_cov = false;
-                            time_update_last = time_current;
-                            propag_time += omp_get_wtime() - propag_cov_start;
-                        }
-                    }
+                    // if(prop_at_freq_of_imu)
+                    // {
+                        // double dt_cov = time_current - time_update_last;
+                        // if ((dt_cov >= imu_time_inte)) // (point_cov_not_prop && imu_prop_cov)
+                        // {
+                        //     double propag_cov_start = omp_get_wtime();
+                        //     kf_output.predict(dt_cov, Q_output, input_in, false, true);
+                        //     // imu_upda_cov = false;
+                        //     time_update_last = time_current;
+                        //     propag_time += omp_get_wtime() - propag_cov_start;
+                        // }
+                    // }
 
                     solve_start = omp_get_wtime();
                         
@@ -1211,7 +1219,7 @@ int main(int argc, char** argv)
                             kf_input.predict(dt_cov, Q_input, input_in, false, true); 
                             time_update_last = imu_last.header.stamp.toSec(); //time_current;
                         }
-                        kf_input.predict(dt, Q_input, input_in, true, false); 
+                            kf_input.predict(dt, Q_input, input_in, true, false); 
                         t_last = imu_last.header.stamp.toSec();
                         imu_prop_cov = true;
                         // imu_upda_cov = true;
@@ -1230,7 +1238,7 @@ int main(int argc, char** argv)
                             time_update_last = time_current; 
                         }
                     }
-                    kf_input.predict(dt, Q_input, input_in, true, false); 
+                        kf_input.predict(dt, Q_input, input_in, true, false); 
 
                     propag_time += omp_get_wtime() - propag_start;
 
