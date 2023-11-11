@@ -670,7 +670,7 @@ void set_posestamp(T & out)
         out.position.x = kf_input.x_.pos(0);
         out.position.y = kf_input.x_.pos(1);
         out.position.z = kf_input.x_.pos(2);
-        Eigen::Quaterniond q(kf_output.x_.rot);
+        Eigen::Quaterniond q(kf_input.x_.rot);
         out.orientation.x = q.coeffs()[0];
         out.orientation.y = q.coeffs()[1];
         out.orientation.z = q.coeffs()[2];
