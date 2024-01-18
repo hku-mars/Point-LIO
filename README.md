@@ -1,13 +1,13 @@
 # Point-LIO
 ## 1. Introduction
 
+**Please try the new branch 'point-lio-with-grid-map', it solves some implementation problems of the original code, and also supports the simulation dataset with point of a scan collected at the same time stamp.**
 <div align="center">
     <div align="center">
         <img src="https://github.com/hku-mars/Point-LIO/raw/master/image/toc4.png" width = 75% >
     </div>
     <font color=#a0a0a0 size=2>The framework and key points of the Point-LIO.</font>
 </div>
-**Please try the new branch 'point-lio-with-grid-map', it solves some implementation problems of the original code, and also supports the simulation dataset with point of a scan collected at the same time stamp.**
 
 **New features:**
 1. would not fly under degeneration.
