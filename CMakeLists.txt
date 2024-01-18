@@ -60,7 +60,6 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(Eigen3 REQUIRED)
 find_package(PCL 1.8 REQUIRED)
 
-
 message(Eigen: ${EIGEN3_INCLUDE_DIR})
 
 include_directories(
@@ -75,11 +74,22 @@ link_directories(
 	${PCL_LIBRARY_DIRS}
 )
 
-add_executable(pointlio_mapping src/laserMapping.cpp
+
+generate_messages(
+ DEPENDENCIES
+ geometry_msgs
+)
+
+catkin_package(
+  CATKIN_DEPENDS geometry_msgs nav_msgs roscpp rospy std_msgs message_runtime
+  DEPENDS EIGEN3 PCL
+  INCLUDE_DIRS
+)
+
+add_executable(pointlio_mapping src/laserMapping.cpp 
                 src/li_initialization.cpp src/parameters.cpp src/preprocess.cpp src/Estimator.cpp 
                 src/IMU_Processing.cpp)
 target_link_libraries(pointlio_mapping ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${PYTHON_LIBRARIES})
-
 target_include_directories(pointlio_mapping PRIVATE ${PYTHON_INCLUDE_DIRS})
 
 

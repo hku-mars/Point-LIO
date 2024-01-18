@@ -3,7 +3,7 @@
 
 	<arg name="rviz" default="true" />
 
-	<node pkg="point_lio" type="pointlio_mapping" name="laserMapping" output="screen">
+	<node pkg="point_lio" type="pointlio_mapping" name="laserMapping" output="screen" > 
 	<rosparam command="load" file="$(find point_lio)/config/avia.yaml" />
 	<param name="use_imu_as_input" type="bool" value="0"/> <!--change to 1 to use IMU as input of Point-LIO-->
 	<param name="prop_at_freq_of_imu" type="bool" value="1"/>
