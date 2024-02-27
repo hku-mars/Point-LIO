@@ -26,10 +26,10 @@ def generate_launch_description():
             'cube_side_length': 1000.0,  # Option: 1000, 2000
             'runtime_pos_log_enable': False  # Option: True
         },
-        PathJoinSubstitution([
-            FindPackageShare('point_lio'),
-            'config', 'horizon.yaml'
-        ])
+        # PathJoinSubstitution([
+        #     FindPackageShare('point_lio'),
+        #     'config', 'horizon.yaml'
+        # ])
     ]
 
     # Node definition for laserMapping with Point-LIO

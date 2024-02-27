@@ -1,4 +1,4 @@
-point_lio:
+/**:
     ros__parameters:
         common:
             lid_topic: "/os_cloud_node/points"
@@ -11,9 +11,9 @@ point_lio:
             # the timestamp of IMU is transferred from the current timeline to LiDAR's timeline by subtracting this value
 
         preprocess:
-            lidar_type: 3 # 2 #velodyne                # 1 Livox Avia LiDAR
+            lidar_type: 3 # 1 for Livox serials LiDAR, 2 for Velodyne LiDAR, 3 for ouster LiDAR
             scan_line: 32 # 32 #velodyne 6 avia
-            timestamp_unit: 3           # the unit of time/t field in the PointCloud2 rostopic: 0-second, 1-milisecond, 2-microsecond, 3-nanosecond.
+            timestamp_unit: 3   # the unit of time/t field in the PointCloud2 rostopic: 0-second, 1-milisecond, 2-microsecond, 3-nanosecond.
             blind: 0.20
 
         mapping:
@@ -22,11 +22,11 @@ point_lio:
             extrinsic_est_en: false # for aggressive motion, set this variable false
             imu_time_inte: 0.01 # = 1 / frequency of IMU
             satu_acc: 30.0 # the saturation value of IMU's acceleration. not related to the units
-            satu_gyro: 35 # the saturation value of IMU's angular velocity. not related to the units
+            satu_gyro: 35.0 # the saturation value of IMU's angular velocity. not related to the units
             acc_norm: 9.81 # 1.0 for g as unit, 9.81 for m/s^2 as unit of the IMU's acceleration
             lidar_meas_cov: 0.1 # 0.01
-            acc_cov_output: 500
-            gyr_cov_output: 1000
+            acc_cov_output: 500.0
+            gyr_cov_output: 1000.0
             b_acc_cov: 0.0001
             b_gyr_cov: 0.0001
             imu_meas_acc_cov: 0.1 #0.1 # 2
@@ -34,16 +34,16 @@ point_lio:
             gyr_cov_input: 0.01 # for IMU as input model
             acc_cov_input: 0.1 # for IMU as input model
             plane_thr: 0.1 # 0.05, the threshold for plane criteria, the smaller, the flatter a plane
-            match_s: 81
-            fov_degree: 180
+            match_s: 81.0
+            fov_degree: 180.0
             det_range: 150.0
             gravity_align: true # true to align the z axis of world frame with the direction of gravity, and the gravity direction should be specified below
             gravity: [ 0.0, 0.0, -9.810 ] # [0.0, 9.810, 0.0] # gravity to be aligned
             gravity_init: [ 0.0, 0.0, -9.810 ] # [0.0, 9.810, 0.0] # # preknown gravity in the first IMU body frame, use when imu_en is false or start from a non-stationary state
             extrinsic_T: [ 0.0, 0.0, 0.0 ]
-            extrinsic_R: [ 1, 0, 0,
-                           0, 1, 0,
-                           0, 0, 1 ]
+            extrinsic_R: [ 1.0, 0.0, 0.0,
+                           0.0, 1.0, 0.0,
+                           0.0, 0.0, 1.0 ]
 
         odometry:
             publish_odometry_without_downsample: false
