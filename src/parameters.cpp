@@ -75,10 +75,10 @@ void readParameters(shared_ptr<rclcpp::Node> &nh) {
     nh->declare_parameter<int>("preprocess.timestamp_unit", 1);
     nh->declare_parameter<double>("mapping.match_s", 81);
     nh->declare_parameter<bool>("mapping.gravity_align", true);
-    nh->declare_parameter<std::vector<double>>("mapping.gravity");
-    nh->declare_parameter<std::vector<double>>("mapping.gravity_init");
-    nh->declare_parameter<std::vector<double>>("mapping.extrinsic_T");
-    nh->declare_parameter<std::vector<double>>("mapping.extrinsic_R");
+    nh->declare_parameter<std::vector<double>>("mapping.gravity", {0, 0, -9.810});
+    nh->declare_parameter<std::vector<double>>("mapping.gravity_init", {0, 0, -9.810});
+    nh->declare_parameter<std::vector<double>>("mapping.extrinsic_T", {0, 0, 0});
+    nh->declare_parameter<std::vector<double>>("mapping.extrinsic_R", {1, 0, 0, 0, 1, 0, 0, 0, 1});
     nh->declare_parameter<bool>("odometry.publish_odometry_without_downsample", false);
     nh->declare_parameter<bool>("publish.path_en", true);
     nh->declare_parameter<bool>("publish.scan_publish_en", true);

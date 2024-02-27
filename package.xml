@@ -19,26 +19,21 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <!-- Dependencies are now also categorized as build, build_export, and exec_depend -->
+  <depend>rclcpp</depend> <!-- roscpp in ROS1 is replaced by rclcpp in ROS2 -->
+  <depend>rclpy</depend>  <!-- rospy is replaced by rclpy in ROS2 -->
+  <depend>sensor_msgs</depend>
   <depend>geometry_msgs</depend>
   <depend>nav_msgs</depend>
-  <depend>rclcpp</depend> <!-- roscpp in ROS1 is replaced by rclcpp in ROS2 -->
-  <!-- rospy is replaced by rclpy in ROS2 -->
-  <depend>rclpy</depend>
-  <depend>std_msgs</depend>
-  <depend>sensor_msgs</depend>
   <depend>tf2_ros</depend> <!-- tf in ROS1 is replaced by tf2 in ROS2 -->
-  <depend>tf2_geometry_msgs</depend> <!-- Needed for tf2 transformations with geometry_msgs -->
+  <depend>pcl_ros</depend> <!-- For PCL support -->
   <depend>pcl_conversions</depend> <!-- For PCL support -->
-  <depend>livox_ros2_driver</depend> <!-- Assuming a ROS2 version of the Livox driver exists -->
-  <!-- ROS2 uses a different approach for message generation -->
-  <depend>message_generation</depend>
-  <depend>message_runtime</depend>
+  <depend>livox_ros_driver2</depend>
 
   <!-- test_depend remains the same, but make sure the testing tools you use are compatible with ROS2 -->
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
   <export>
-    <!-- ROS2 packages can also include additional export directives -->
+    <build_type>ament_cmake</build_type>
   </export>
 </package>

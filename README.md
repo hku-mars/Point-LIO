@@ -1,6 +1,8 @@
 # Point-LIO (If you have problems with the formal commits, please try the newest commit first, several modifications have be made in newest commit for wider adaptivity)
 ## Point-LIO: Robust High-Bandwidth Lidar-Inertial Odometry (Pay attention to modifying the parameters for IMU in .yaml file, according to the IMU you use.)
 
+ROS2 version of Point-LIO
+
 ## 1. Introduction
 
 <div align="center">
@@ -74,8 +76,8 @@ Following the official [Eigen installation](eigen.tuxfamily.org/index.php?title=
 sudo apt-get install libeigen3-dev
 ```
 
-## **3.3 livox_ros_driver**
-Follow [livox_ros_driver Installation](https://github.com/Livox-SDK/livox_ros_driver).
+## **3.3 livox_ros_driver2**
+Follow [livox_ros_driver2 Installation](https://github.com/Livox-SDK/livox_ros_driver2).
 
 *Remarks:*
 - Since the Point-LIO supports Livox serials LiDAR, so the **livox_ros_driver2** must be installed and **sourced** before run any Point-LIO launch file.

@@ -1,55 +1,49 @@
 point_lio:
     ros__parameters:
         common:
-            lid_topic: "/velodyne_points"
-            imu_topic: "/imu/data"
+            lid_topic: "/livox/lidar"
+            imu_topic: "/livox/imu"
             con_frame: false # true: if you need to combine several LiDAR frames into one
             con_frame_num: 1 # the number of frames combined
             cut_frame: false # true: if you need to cut one LiDAR frame into several subframes
             cut_frame_time_interval: 0.1 # should be integral fraction of 1 / LiDAR frequency
-            time_lag_imu_to_lidar: 0.0 # Time offset between LiDAR and IMU calibrated by other algorithms, e.g., LI-Init (find in Readme)
+            time_lag_imu_to_lidar: 0.0 # Time offset between LiDAR and IMU calibrated by other algorithms, e.g., LI-Init (find in Readme),
             # the timestamp of IMU is transferred from the current timeline to LiDAR's timeline by subtracting this value
 
         preprocess:
-            lidar_type: 2
-            scan_line: 32
-            timestamp_unit: 2           # the unit of time/t field in the PointCloud2 rostopic: 0-second, 1-milisecond, 2-microsecond, 3-nanosecond.
-            blind: 2.0
+            lidar_type: 1      # 1 for Livox serials LiDAR, 2 for Velodyne LiDAR, 3 for ouster LiDAR
+            scan_line: 4
+            timestamp_unit: 3   # the unit of time/t field in the PointCloud2 rostopic: 0-second, 1-milisecond, 2-microsecond, 3-nanosecond.
+            blind: 0.5
 
         mapping:
             imu_en: true
             start_in_aggressive_motion: false # if true, a preknown gravity should be provided in following gravity_init
             extrinsic_est_en: false # for aggressive motion, set this variable false
-            imu_time_inte: 0.01 # = 1 / frequency of IMU
-            satu_acc: 30.0 # the saturation value of IMU's acceleration. not related to the units
+            imu_time_inte: 0.005 # = 1 / frequency of IMU
+            satu_acc: 3.0 # the saturation value of IMU's acceleration. not related to the units
             satu_gyro: 35 # the saturation value of IMU's angular velocity. not related to the units
-            acc_norm: 9.81 # 1.0 for g as unit, 9.81 for m/s^2 as unit of the IMU's acceleration
+            acc_norm: 1.0 # 1.0 for g as unit, 9.81 for m/s^2 as unit of the IMU's acceleration
             lidar_meas_cov: 0.01 # 0.001
             acc_cov_output: 500
             gyr_cov_output: 1000
             b_acc_cov: 0.0001
             b_gyr_cov: 0.0001
-            imu_meas_acc_cov: 0.1 #0.1 # 2
-            imu_meas_omg_cov: 0.1 #0.1 # 2
+            imu_meas_acc_cov: 0.01 #0.1 # 2
+            imu_meas_omg_cov: 0.01 #0.1 # 2
             gyr_cov_input: 0.01 # for IMU as input model
             acc_cov_input: 0.1 # for IMU as input model
             plane_thr: 0.1 # 0.05, the threshold for plane criteria, the smaller, the flatter a plane
             match_s: 81
-            fov_degree: 180
+            fov_degree: 360.0
             det_range: 100.0
             gravity_align: true # true to align the z axis of world frame with the direction of gravity, and the gravity direction should be specified below
             gravity: [ 0.0, 0.0, -9.810 ] # [0.0, 9.810, 0.0] # gravity to be aligned
             gravity_init: [ 0.0, 0.0, -9.810 ] # [0.0, 9.810, 0.0] # # preknown gravity in the first IMU body frame, use when imu_en is false or start from a non-stationary state
-            extrinsic_T: [ 0, 0, 0.28 ] # ulhk # [-0.5, 1.4, 1.5] # utbm
-            # extrinsic_R: [ 0, 1, 0,
-            #                -1, 0, 0,
-            #                0, 0, 1 ] # ulhk 5 6
-            # extrinsic_R: [ 0, -1, 0,
-            #                 1, 0, 0,
-            #                 0, 0, 1 ] # utbm 1, 2
+            extrinsic_T: [ -0.011, -0.02329, 0.04412 ]
             extrinsic_R: [ 1, 0, 0,
                            0, 1, 0,
-                           0, 0, 1 ] # ulhk 4 utbm 3
+                           0, 0, 1 ]
 
         odometry:
             publish_odometry_without_downsample: false

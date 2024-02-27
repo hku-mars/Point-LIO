@@ -14,6 +14,10 @@ def generate_launch_description():
 
     # Node parameters, including those from the YAML configuration file
     laser_mapping_params = [
+        PathJoinSubstitution([
+            FindPackageShare('point_lio'),
+            'config', 'avia.yaml'
+        ]),
         {
             'use_imu_as_input': False,  # Change to True to use IMU as input of Point-LIO
             'prop_at_freq_of_imu': True,
@@ -23,13 +27,9 @@ def generate_launch_description():
             'space_down_sample': True,
             'filter_size_surf': 0.3,  # options: 0.5, 0.3, 0.2, 0.15, 0.1
             'filter_size_map': 0.2,  # options: 0.5, 0.3, 0.15, 0.1
-            'cube_side_length': 2000,  # option: 1000
+            'cube_side_length': 2000.0,  # option: 1000
             'runtime_pos_log_enable': False,  # option: True
         },
-        PathJoinSubstitution([
-            FindPackageShare('point_lio'),
-            'config', 'avia.yaml'
-        ])
     ]
 
     # Node definition for laserMapping with Point-LIO
@@ -39,7 +39,7 @@ def generate_launch_description():
         name='laserMapping',
         output='screen',
         parameters=laser_mapping_params,
-        prefix='gdb -ex run --args'
+        # prefix='gdb -ex run --args'
     )
 
     # Conditional RViz node launch

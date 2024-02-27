@@ -14,20 +14,20 @@ add_definitions(-DROOT_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/\")
 add_compile_options(-O3 -pthread -fexceptions)
 
 # Processor count and definitions
-message("Current CPU architecture: ${CMAKE_SYSTEM_PROCESSOR}")
+message(STATUS "Current CPU architecture: ${CMAKE_SYSTEM_PROCESSOR}")
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)" )
   include(ProcessorCount)
   ProcessorCount(N)
-  message("Processer number:  ${N}")
+  message(STATUS "Processor number:  ${N}")
   if(N GREATER 5)
     add_definitions(-DMP_EN)
     add_definitions(-DMP_PROC_NUM=4)
-    message("core for MP:  3")
+    message(STATUS "core for MP:  3")
   elseif(N GREATER 3)
     math(EXPR PROC_NUM "${N} - 2")
     add_definitions(-DMP_EN)
     add_definitions(-DMP_PROC_NUM="${PROC_NUM}")
-    message("core for MP:  ${PROC_NUM}")
+    message(STATUS "core for MP:  ${PROC_NUM}")
   else()
     add_definitions(-DMP_PROC_NUM=1)
   endif()
@@ -42,13 +42,11 @@ find_package(rclpy REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
-find_package(std_msgs REQUIRED)
 find_package(pcl_ros REQUIRED)
 find_package(pcl_conversions REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(livox_ros_driver2 REQUIRED)
 
-find_package(PCL 1.8 REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 
@@ -65,7 +63,6 @@ find_path(MATPLOTLIB_CPP_INCLUDE_DIRS "matplotlibcpp.h")
 include_directories(
         include
         ${EIGEN3_INCLUDE_DIR}
-        ${PCL_INCLUDE_DIRS}
         ${PYTHON_INCLUDE_DIRS}
 )
 
@@ -77,13 +74,12 @@ ament_target_dependencies(pointlio_mapping
         geometry_msgs
         nav_msgs
         sensor_msgs
-        std_msgs
         pcl_ros
         pcl_conversions
         tf2_ros
         livox_ros_driver2
 )
-target_link_libraries(pointlio_mapping ${PCL_LIBRARIES} ${PYTHON_LIBRARIES})
+target_link_libraries(pointlio_mapping ${PYTHON_LIBRARIES})
 target_include_directories(pointlio_mapping PRIVATE ${PYTHON_INCLUDE_DIRS})
 
 # Install the executable
@@ -92,7 +88,12 @@ install(TARGETS
         DESTINATION lib/${PROJECT_NAME}
 )
 
+install(
+        DIRECTORY config launch rviz_cfg
+        DESTINATION share/${PROJECT_NAME}
+)
+
 # Export dependencies
-ament_export_dependencies(rclcpp rclpy geometry_msgs nav_msgs sensor_msgs std_msgs pcl_ros pcl_conversions tf2_ros livox_ros_driver2 Eigen3 PCL)
+ament_export_dependencies(rclcpp rclpy geometry_msgs nav_msgs sensor_msgs pcl_ros pcl_conversions tf2_ros livox_ros_driver2 Eigen3)
 
 ament_package()
