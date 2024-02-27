@@ -63,7 +63,7 @@ Our accompany video is available on **YouTube**.
 # **3. Prerequisites**
 
 ## **3.1 Ubuntu and [ROS](https://www.ros.org/)**
-We tested our code on Ubuntu20.04 with Galactic. Ubuntu18.04 and lower versions have problems of environments to support the Point-LIO, try to avoid using Point-LIO in those systems. Additional ROS package is required:
+We tested our code on Ubuntu 20.04 with Galactic. Ubuntu18.04 and lower versions have problems of environments to support the Point-LIO, try to avoid using Point-LIO in those systems. Additional ROS package is required:
 ```
 sudo apt-get install ros-xxx-pcl-conversions
 ```
@@ -78,22 +78,22 @@ sudo apt-get install libeigen3-dev
 Follow [livox_ros_driver Installation](https://github.com/Livox-SDK/livox_ros_driver).
 
 *Remarks:*
-- Since the Point-LIO supports Livox serials LiDAR, so the **livox_ros_driver** must be installed and **sourced** before run any Point-LIO luanch file.
-- How to source? The easiest way is add the line ``` source $Licox_ros_driver_dir$/devel/setup.bash ``` to the end of file ``` ~/.bashrc ```, where ``` $Licox_ros_driver_dir$ ``` is the directory of the livox ros driver workspace (should be the ``` ws_livox ``` directory if you completely followed the livox official document).
+- Since the Point-LIO supports Livox serials LiDAR, so the **livox_ros_driver2** must be installed and **sourced** before run any Point-LIO launch file.
+- How to source? The easiest way is add the line ``` source $Licox_ros_driver_dir$/install/setup.bash ``` to the end of file ``` ~/.bashrc ```, where ``` $Licox_ros_driver_dir$ ``` is the directory of the livox ros driver workspace (should be the ``` ws_livox ``` directory if you completely followed the livox official document).
 
 ## 4. Build
-Clone the repository and catkin_make:
+Clone the repository and colcon build:
 
 ```
-    cd ~/$A_ROS_DIR$/src
+    cd ~/$Point_LIO_ROS_DIR$/src
     git clone https://github.com/hku-mars/Point-LIO.git
     cd Point-LIO
     git submodule update --init
     cd ../..
-    catkin_make
-    source devel/setup.bash
+    colcon build --symlink-install
+    source install/setup.bash
 ```
-- Remember to source the livox_ros_driver before build (follow 3.3 **livox_ros_driver**)
+- Remember to source the livox_ros_driver before build (follow 3.3 **livox_ros_driver2**)
 - If you want to use a custom build of PCL, add the following line to ~/.bashrc
 ```export PCL_ROOT={CUSTOM_PCL_PATH}```
 
@@ -103,12 +103,12 @@ Clone the repository and catkin_make:
 Connect to your PC to Livox Avia LiDAR by following  [Livox-ros-driver installation](https://github.com/Livox-SDK/livox_ros_driver), then
 ```
     cd ~/$Point_LIO_ROS_DIR$
-    source devel/setup.bash
-    roslaunch point_lio mapping_avia.launch
-    roslaunch livox_ros_driver livox_lidar_msg.launch
+    source install/setup.bash
+    ros2 launch point_lio mapping_avia.launch.py
+    ros2 launch livox_ros_driver msg_HAP_launch.py
 ```
-- For livox serials, Point-LIO only support the data collected by the ``` livox_lidar_msg.launch ``` since only its ``` livox_ros_driver/CustomMsg ``` data structure produces the timestamp of each LiDAR point which is very important for Point-LIO. ``` livox_lidar.launch ``` can not produce it right now.
-- If you want to change the frame rate, please modify the **publish_freq** parameter in the [livox_lidar_msg.launch](https://github.com/Livox-SDK/livox_ros_driver/blob/master/livox_ros_driver/launch/livox_lidar_msg.launch) of [Livox-ros-driver](https://github.com/Livox-SDK/livox_ros_driver) before make the livox_ros_driver pakage.
+- For livox serials, Point-LIO only support the data collected by the ``` msg_HAP_launch.py ``` since only its ``` livox_ros_driver/CustomMsg ``` data structure produces the timestamp of each LiDAR point which is very important for Point-LIO. ``` livox_lidar.launch.py ``` can not produce it right now.
+- If you want to change the frame rate, please modify the **publish_freq** parameter in the [msg_HAP_launch.py](https://github.com/Livox-SDK/livox_ros_driver2/blob/master/launch_ROS2/msg_HAP_launch.py) of [Livox-ros-driver](https://github.com/Livox-SDK/livox_ros_driver) before make the livox_ros_driver pakage.
 
 ### 5.2 For Livox serials with external IMU
 
@@ -143,8 +143,8 @@ Edit ``` config/velodyne.yaml ``` to set the below parameters:
 Step B: Run below
 ```
     cd ~/$Point_LIO_ROS_DIR$
-    source devel/setup.bash
-    roslaunch point_lio mapping_velody16.launch
+    source install/setup.bash
+    ros2 launch point_lio mapping_velody16.launch.py
 ```
 
 Step C: Run LiDAR's ros driver or play rosbag.
