@@ -6,10 +6,10 @@ std::vector<int> time_seq;
 PointCloudXYZI::Ptr feats_down_body(new PointCloudXYZI());
 PointCloudXYZI::Ptr feats_down_world(new PointCloudXYZI());
 std::vector<V3D> pbody_list;
-std::vector<PointVector> Nearest_Points; 
+std::vector<PointVector> Nearest_Points;
 KD_TREE<PointType> ikdtree;
 std::vector<float> pointSearchSqDis(NUM_MATCH_POINTS);
-bool   point_selected_surf[100000] = {0};
+bool point_selected_surf[100000] = {0};
 std::vector<M3D> crossmat_list;
 int effct_feat_num = 0;
 int k;
@@ -26,7 +26,7 @@ M3D Lidar_R_wrt_IMU(Eye3d);
 
 typedef MTK::vect<3, double> vect3;
 typedef MTK::SO3<double> SO3;
-typedef MTK::S2<double, 98090, 10000, 1> S2; 
+typedef MTK::S2<double, 98090, 10000, 1> S2;
 typedef MTK::vect<1, double> vect1;
 typedef MTK::vect<2, double> vect2;
 

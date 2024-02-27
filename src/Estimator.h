@@ -16,7 +16,7 @@ extern std::vector<int> time_seq;
 extern PointCloudXYZI::Ptr feats_down_body; //(new PointCloudXYZI());
 extern PointCloudXYZI::Ptr feats_down_world; //(new PointCloudXYZI());
 extern std::vector<V3D> pbody_list;
-extern std::vector<PointVector> Nearest_Points; 
+extern std::vector<PointVector> Nearest_Points;
 extern KD_TREE<PointType> ikdtree;
 extern std::vector<float> pointSearchSqDis;
 extern bool point_selected_surf[100000]; // = {0};
@@ -31,7 +31,7 @@ extern M3D Lidar_R_wrt_IMU; //(Eye3d);
 
 typedef MTK::vect<3, double> vect3;
 typedef MTK::SO3<double> SO3;
-typedef MTK::S2<double, 98090, 10000, 1> S2; 
+typedef MTK::S2<double, 98090, 10000, 1> S2;
 typedef MTK::vect<1, double> vect1;
 typedef MTK::vect<2, double> vect2;
 
@@ -111,7 +111,7 @@ void h_model_output(state_output &s, esekfom::dyn_share_modified<double> &ekfom_
 
 void h_model_IMU_output(state_output &s, esekfom::dyn_share_modified<double> &ekfom_data);
 
-void pointBodyToWorld(PointType const * const pi, PointType * const po);
+void pointBodyToWorld(PointType const *const pi, PointType *const po);
 
 const bool time_list(PointType &x, PointType &y); // {return (x.curvature < y.curvature);};
 

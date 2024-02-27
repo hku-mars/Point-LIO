@@ -43,9 +43,11 @@ find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
-find_package(tf2 REQUIRED)
+find_package(pcl_ros REQUIRED)
+find_package(pcl_conversions REQUIRED)
 find_package(tf2_ros REQUIRED)
-find_package(tf2_geometry_msgs REQUIRED)
+find_package(livox_ros_driver2 REQUIRED)
+
 find_package(PCL 1.8 REQUIRED)
 find_package(Eigen3 REQUIRED)
 
@@ -76,9 +78,10 @@ ament_target_dependencies(pointlio_mapping
         nav_msgs
         sensor_msgs
         std_msgs
-        tf2
+        pcl_ros
+        pcl_conversions
         tf2_ros
-        tf2_geometry_msgs
+        livox_ros_driver2
 )
 target_link_libraries(pointlio_mapping ${PCL_LIBRARIES} ${PYTHON_LIBRARIES})
 target_include_directories(pointlio_mapping PRIVATE ${PYTHON_INCLUDE_DIRS})
@@ -90,6 +93,6 @@ install(TARGETS
 )
 
 # Export dependencies
-ament_export_dependencies(rclcpp rclpy geometry_msgs nav_msgs sensor_msgs std_msgs tf2 tf2_ros tf2_geometry_msgs Eigen3 PCL)
+ament_export_dependencies(rclcpp rclpy geometry_msgs nav_msgs sensor_msgs std_msgs pcl_ros pcl_conversions tf2_ros livox_ros_driver2 Eigen3 PCL)
 
 ament_package()

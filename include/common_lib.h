@@ -5,17 +5,18 @@
 #include <Eigen/Eigen>
 #include <pcl/point_types.h>
 #include <pcl/point_cloud.h>
-#include <sensor_msgs/Imu.h>
-#include <nav_msgs/Odometry.h>
-#include <tf/transform_broadcaster.h>
-#include <eigen_conversions/eigen_msg.h>
+#include <sensor_msgs/msg/imu.hpp>
+#include <nav_msgs/msg/odometry.hpp>
+#include <tf2_ros/transform_broadcaster.h>
+#include <deque>
+//#include <eigen_conversions/eigen_msg.h>
 using namespace std;
 using namespace Eigen;
 
 #define PI_M (3.14159265358)
-#define G_m_s2 (9.81)         // Gravaty const in GuangDong/China
-#define DIM_STATE (18)      // Dimension of states (Let Dim(SO(3)) = 3)
-#define DIM_PROC_N (12)      // Dimension of process noise (Let Dim(SO(3)) = 3)
+#define G_m_s2 (9.81)         // Gravity const in GuangDong/China
+#define DIM_STATE (18)        // Dimension of states (Let Dim(SO(3)) = 3)
+#define DIM_PROC_N (12)       // Dimension of process noise (Let Dim(SO(3)) = 3)
 #define CUBE_LEN  (6.0)
 #define LIDAR_SP_LEN    (2)
 #define INIT_COV   (0.0001)
@@ -23,7 +24,7 @@ using namespace Eigen;
 #define MAX_MEAS_DIM        (10000)
 
 #define VEC_FROM_ARRAY(v)        v[0],v[1],v[2]
-#define VEC_FROM_ARRAY_SIX(v)        v[0],v[1],v[2],v[3],v[4],v[5]
+#define VEC_FROM_ARRAY_SIX(v)    v[0],v[1],v[2],v[3],v[4],v[5]
 #define MAT_FROM_ARRAY(v)        v[0],v[1],v[2],v[3],v[4],v[5],v[6],v[7],v[8]
 #define CONSTRAIN(v,min,max)     ((v>min)?((v<max)?v:max):min)
 #define ARRAY_FROM_EIGEN(mat)    mat.data(), mat.data() + mat.rows() * mat.cols()
@@ -61,7 +62,7 @@ struct MeasureGroup     // Lidar data and imu dates for the curent process
     double lidar_beg_time;
     double lidar_last_time;
     PointCloudXYZI::Ptr lidar;
-    deque<sensor_msgs::Imu::ConstPtr> imu;
+    deque<sensor_msgs::msg::Imu::ConstSharedPtr> imu{};
 };
 
 template <typename T>
@@ -171,6 +172,19 @@ bool esti_plane(Matrix<T, 4, 1> &pca_result, const PointVector &point, const T &
         }
     }
     return true;
+}
+
+inline double get_time_sec(const builtin_interfaces::msg::Time &time)
+{
+  return rclcpp::Time(time).seconds();
+}
+
+inline rclcpp::Time get_ros_time(double timestamp)
+{
+  int32_t sec = std::floor(timestamp);
+  auto nanosec_d = (timestamp - std::floor(timestamp)) * 1e9;
+  uint32_t nanosec = nanosec_d;
+  return rclcpp::Time(sec, nanosec);
 }
 
 #endif

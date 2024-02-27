@@ -63,7 +63,7 @@ Our accompany video is available on **YouTube**.
 # **3. Prerequisites**
 
 ## **3.1 Ubuntu and [ROS](https://www.ros.org/)**
-We tested our code on Ubuntu20.04 with noetic. Ubuntu18.04 and lower versions have problems of environments to support the Point-LIO, try to avoid using Point-LIO in those systems. Additional ROS package is required:
+We tested our code on Ubuntu20.04 with Galactic. Ubuntu18.04 and lower versions have problems of environments to support the Point-LIO, try to avoid using Point-LIO in those systems. Additional ROS package is required:
 ```
 sudo apt-get install ros-xxx-pcl-conversions
 ```
