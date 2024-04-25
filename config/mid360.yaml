@@ -7,8 +7,7 @@
             con_frame_num: 1 # the number of frames combined
             cut_frame: false # true: if you need to cut one LiDAR frame into several subframes
             cut_frame_time_interval: 0.1 # should be integral fraction of 1 / LiDAR frequency
-            time_lag_imu_to_lidar: 0.0 # Time offset between LiDAR and IMU calibrated by other algorithms, e.g., LI-Init (find in Readme),
-            # the timestamp of IMU is transferred from the current timeline to LiDAR's timeline by subtracting this value
+            time_diff_lidar_to_imu: 0.0 # Time offset between LiDAR and IMU calibrated by other algorithms, e.g., LI-Init (find in Readme)
 
         preprocess:
             lidar_type: 1      # 1 for Livox serials LiDAR, 2 for Velodyne LiDAR, 3 for ouster LiDAR
