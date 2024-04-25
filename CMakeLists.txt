@@ -81,18 +81,20 @@ link_directories(
 add_executable(pointlio_mapping src/laserMapping.cpp
                 src/li_initialization.cpp src/parameters.cpp src/preprocess.cpp src/Estimator.cpp 
                 src/IMU_Processing.cpp)
+
 ament_target_dependencies(pointlio_mapping
-        rclcpp
-        rclpy
-        geometry_msgs
-        nav_msgs
-        sensor_msgs
-        visualization_msgs
-        pcl_ros
-        pcl_conversions
-        tf2_ros
-        livox_ros_driver2
+  rclcpp
+  rclpy
+  geometry_msgs
+  nav_msgs
+  sensor_msgs
+  visualization_msgs
+  pcl_ros
+  pcl_conversions
+  tf2_ros
+  livox_ros_driver2
 )
+
 target_link_libraries(pointlio_mapping ${PCL_LIBRARIES} ${PYTHON_LIBRARIES})
 target_include_directories(pointlio_mapping PRIVATE ${PYTHON_INCLUDE_DIRS})
 
