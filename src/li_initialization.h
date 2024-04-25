@@ -17,20 +17,20 @@ extern int scan_count;
 extern int frame_ct, wait_num;
 extern std::deque<PointCloudXYZI::Ptr>  lidar_buffer;
 extern std::deque<double>               time_buffer;
-extern std::deque<sensor_msgs::Imu::Ptr> imu_deque;
+extern std::deque<sensor_msgs::msg::Imu::ConstSharedPtr> imu_deque;
 extern std::mutex m_time;
 extern bool lidar_pushed, imu_pushed;
 extern double imu_first_time;
 extern bool lose_lid;
-extern sensor_msgs::Imu imu_last, imu_next;
+extern sensor_msgs::msg::Imu imu_last, imu_next;
 extern PointCloudXYZI::Ptr  ptr_con;
 extern double T1[MAXN], s_plot[MAXN], s_plot2[MAXN], s_plot3[MAXN], s_plot11[MAXN];
 
-// extern sensor_msgs::Imu::ConstPtr imu_last_ptr;
+// extern sensor_msgs::msg::Imu::ConstSharedPtr imu_last_ptr;
 
-void standard_pcl_cbk(const sensor_msgs::PointCloud2::ConstPtr &msg); 
-void livox_pcl_cbk(const livox_ros_driver::CustomMsg::ConstPtr &msg); 
-void imu_cbk(const sensor_msgs::Imu::ConstPtr &msg_in); 
+void standard_pcl_cbk(const sensor_msgs::msg::PointCloud2::SharedPtr &msg); 
+void livox_pcl_cbk(const livox_ros_driver2::msg::CustomMsg::SharedPtr &msg); 
+void imu_cbk(const sensor_msgs::msg::Imu::ConstSharedPtr &msg_in); 
 bool sync_packages(MeasureGroup &meas);
 
 // #endif
