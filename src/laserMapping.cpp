@@ -410,11 +410,11 @@ int main(int argc, char **argv) {
   //------------------------------------------------------------------------------------------------------
   signal(SIGINT, SigHandle);
   rclcpp::Rate rate(500);
+  rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(nh);
   while (rclcpp::ok()) {
     if (flg_exit)
       break;
-    rclcpp::executors::SingleThreadedExecutor executor;
-    executor.add_node(nh);
     executor.spin_some(); // 处理当前可用的回调
 
     if (sync_packages(Measures)) {
