@@ -74,10 +74,6 @@ link_directories(
 	${PCL_LIBRARY_DIRS}
 )
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 08e893cda5c52c675c04908d85821af18a89adb7
 generate_messages(
  DEPENDENCIES
  geometry_msgs
@@ -88,12 +84,8 @@ catkin_package(
   DEPENDS EIGEN3 PCL
   INCLUDE_DIRS
 )
-<<<<<<< HEAD
 
 add_executable(pointlio_mapping src/laserMapping.cpp 
-=======
-add_executable(pointlio_mapping src/laserMapping.cpp
->>>>>>> 08e893cda5c52c675c04908d85821af18a89adb7
                 src/li_initialization.cpp src/parameters.cpp src/preprocess.cpp src/Estimator.cpp 
                 src/IMU_Processing.cpp)
 target_link_libraries(pointlio_mapping ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${PYTHON_LIBRARIES})
