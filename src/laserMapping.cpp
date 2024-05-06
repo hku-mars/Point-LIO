@@ -461,13 +461,14 @@ int main(int argc, char** argv)
                 }
                 else
                 {
-                    kf_input.x_.gravity << VEC_FROM_ARRAY(gravity_init);
-                    kf_output.x_.gravity << VEC_FROM_ARRAY(gravity_init);
-                    kf_output.x_.acc << VEC_FROM_ARRAY(gravity_init);
+                    kf_input.x_.gravity << VEC_FROM_ARRAY(gravity); // _init);
+                    kf_output.x_.gravity << VEC_FROM_ARRAY(gravity); //_init);
+                    kf_output.x_.acc << VEC_FROM_ARRAY(gravity); //_init);
                     kf_output.x_.acc *= -1; 
                     p_imu->imu_need_init_ = false;
                     // p_imu->after_imu_init_ = true;
-                }        
+                }     
+                G_m_s2 = std::sqrt(gravity[0] * gravity[0] + gravity[1] * gravity[1] + gravity[2] * gravity[2]);
             }
 
             double t0,t1,t2,t3,t4,t5,match_start, solve_start;
@@ -495,21 +496,21 @@ int main(int argc, char** argv)
                 time_seq = time_compressing<int>(feats_down_body);
                 feats_down_size = feats_down_body->points.size();
             }
-         
-            if (!p_imu->after_imu_init_)
+
+            if (!p_imu->after_imu_init_) // !p_imu->UseLIInit && 
             {
                 if (!p_imu->imu_need_init_)
                 { 
                     V3D tmp_gravity;
                     if (imu_en)
-                    {tmp_gravity = - p_imu->mean_acc / acc_norm * G_m_s2;}
+                    {tmp_gravity = - p_imu->mean_acc / p_imu->mean_acc.norm() * G_m_s2;}
                     else
                     {tmp_gravity << VEC_FROM_ARRAY(gravity_init);
                     p_imu->after_imu_init_ = true;
                     }
                     // V3D tmp_gravity << VEC_FROM_ARRAY(gravity_init);
                     M3D rot_init;
-                    p_imu->Set_init(tmp_gravity, rot_init);  
+                    p_imu->Set_init(tmp_gravity, rot_init);
                     kf_input.x_.rot = rot_init;
                     kf_output.x_.rot = rot_init;
                     // kf_input.x_.rot; //.normalize();
@@ -786,7 +787,7 @@ int main(int argc, char** argv)
 
                         angvel_avr<<imu_next.angular_velocity.x, imu_next.angular_velocity.y, imu_next.angular_velocity.z;
                         acc_avr   <<imu_next.linear_acceleration.x, imu_next.linear_acceleration.y, imu_next.linear_acceleration.z; 
-                        acc_avr_norm = acc_avr * G_m_s2 / acc_norm;
+                        // acc_avr_norm = acc_avr * G_m_s2 / acc_norm;
                         kf_output.update_iterated_dyn_share_IMU();
                         imu_deque.pop_front();
                         if (imu_deque.empty()) break;

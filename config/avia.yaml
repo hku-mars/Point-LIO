@@ -34,8 +34,8 @@ mapping:
     match_s: 81
     ivox_grid_resolution: 2.0
     gravity: [0.0, 0.0, -9.810] # [0.0, 9.810, 0.0] # # [0.0, 0.0, -9.787561] # gvins # 
-    gravity_init: [0.0, 0.0, -9.810] # preknown gravity for unstationary start
-    extrinsic_T: [ 0.04165, 0.02326, -0.0284 ] 
+    gravity_init: [0.0, 0.0, -9.810] # preknown gravity for unstationary start in the initial IMU frame
+    extrinsic_T: [ 0.04165, 0.02326, -0.0284 ] # avia # [0.011, 0.02329, -0.04412] # mid360
     extrinsic_R: [ 1, 0, 0,
                    0, 1, 0,
                    0, 0, 1 ]

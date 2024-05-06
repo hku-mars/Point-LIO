@@ -29,7 +29,7 @@ extern int feats_down_size;
 // extern std::vector<Eigen::Vector3d> normvec_holder;
 extern V3D Lidar_T_wrt_IMU; //(Zero3d);
 extern M3D Lidar_R_wrt_IMU; //(Eye3d);
-
+extern double G_m_s2;
 extern input_ikfom input_in;
 
 Eigen::Matrix<double, 24, 24> process_noise_cov_input();
