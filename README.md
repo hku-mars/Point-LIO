@@ -48,26 +48,25 @@ Following the official [Eigen installation](eigen.tuxfamily.org/index.php?title=
 sudo apt-get install libeigen3-dev
 ```
 
-## **3.3 livox_ros_driver**
-Follow [livox_ros_driver Installation](https://github.com/Livox-SDK/livox_ros_driver).
+## **3.3 livox_ros_driver2**
+Follow [livox_ros_driver2 Installation](https://github.com/Livox-SDK/livox_ros_driver2).
 
 *Remarks:*
-- Since the Point-LIO supports Livox serials LiDAR, so the **livox_ros_driver** must be installed and **sourced** before run any Point-LIO luanch file.
-- How to source? The easiest way is add the line ``` source $Licox_ros_driver_dir$/devel/setup.bash ``` to the end of file ``` ~/.bashrc ```, where ``` $Licox_ros_driver_dir$ ``` is the directory of the livox ros driver workspace (should be the ``` ws_livox ``` directory if you completely followed the livox official document).
+- Since the Point-LIO supports Livox serials LiDAR, so the **livox_ros_driver2** must be installed and **sourced** before run any Point-LIO luanch file.
+- How to source? The easiest way is add the line ``` source $Licox_ros_driver2_dir$/install/setup.sh ``` to the end of file ``` ~/.bashrc ```, where ``` $Livox_ros_driver2_dir$ ``` is the directory of the livox ros driver workspace (should be the ``` ws_livox ``` directory if you completely followed the livox official document).
 
 ## 4. Build
-Clone the repository and catkin_make:
+Clone the repository and colcon_build:
 
 ```
     cd ~/$A_ROS_DIR$/src
     git clone https://github.com/hku-mars/Point-LIO.git
     cd Point-LIO
-    git submodule update --init
     cd ../..
-    catkin_make
-    source devel/setup.bash
+    colcon build --symlink-install
+    source install/setup.sh
 ```
-- Remember to source the livox_ros_driver before build (follow 3.3 **livox_ros_driver**)
+- Remember to source the livox_ros_driver2 before build (follow 3.3 **livox_ros_driver2**)
 - If you want to use a custom build of PCL, add the following line to ~/.bashrc
 ```export PCL_ROOT={CUSTOM_PCL_PATH}```
 
@@ -84,24 +83,44 @@ D. We recommend to set the **extrinsic_est_en** to false if the extrinsic is giv
 
 E. If a high odometry output frequency without downsample is required, set ``` publish_odometry_without_downsample ``` as true. Then the warning message of tf "TF_REPEATED_DATA" will pop up in the terminal window, because the time interval between two publish odometery is too small. The following command could be used to suppress this warning to a smaller frequency:
 
-in your catkin_ws/src,
+in your ros_ws/src,
 
 git clone --branch throttle-tf-repeated-data-error git@github.com:BadgerTechnologies/geometry2.git
 
 Then rebuild, source setup.bash, run and then it should be reduced down to once every 10 seconds. If 10 seconds is still too much log output then change the ros::Duration(10.0) to 10000 seconds or whatever you like.
 
-### 5.1 For Avia
-Connect to your PC to Livox Avia LiDAR by following  [Livox-ros-driver installation](https://github.com/Livox-SDK/livox_ros_driver), then
-```
-    cd ~/$Point_LIO_ROS_DIR$
-    source devel/setup.bash
-    roslaunch point_lio mapping_avia.launch
-    roslaunch livox_ros_driver livox_lidar_msg.launch
-```
-- For livox serials, Point-LIO only support the data collected by the ``` livox_lidar_msg.launch ``` since only its ``` livox_ros_driver/CustomMsg ``` data structure produces the timestamp of each LiDAR point which is very important for Point-LIO. ``` livox_lidar.launch ``` can not produce it right now.
-- If you want to change the frame rate, please modify the **publish_freq** parameter in the [livox_lidar_msg.launch](https://github.com/Livox-SDK/livox_ros_driver/blob/master/livox_ros_driver/launch/livox_lidar_msg.launch) of [Livox-ros-driver](https://github.com/Livox-SDK/livox_ros_driver) before make the livox_ros_driver pakage.
+### 5.1 For Mid360
 
-### 5.2 For Livox serials with external IMU
+Connect to your PC to Livox Mid360 LiDAR by following  [Livox-ros-driver2 installation](https://github.com/Livox-SDK/livox_ros_driver2), then
+
+```sh
+    cd ~/$Point_LIO_ROS_DIR$
+    source devel/setup.sh
+    ros2 launch point_lio mapping_mid360.launch.py
+    ros2 launch livox_ros_driver2 msg_MID360_launch.py
+```
+
+- For livox serials, Point-LIO only support the data collected by the ``` msg_MID360_launch.py ``` since only its ``` livox_ros_driver2/msg/custom_msg ``` data structure produces the timestamp of each LiDAR point which is very important for Point-LIO. ``` rviz_MID360_launch.py ``` can not produce it right now.
+
+- If you want to change the frame rate, please modify the **publish_freq** parameter in the [msg_MID360_launch.py](https://github.com/Livox-SDK/livox_ros_driver2/blob/master/launch_ROS2/msg_MID360_launch.py) of [Livox-ros-driver2](https://github.com/Livox-SDK/livox_ros_driver2) before make the livox_ros_driver2 pakage.
+
+### 5.2 For Avia
+
+As avia's Livox driver is `livox_ros2_driver`, not `livox_ros_driver2`, you need to do as follows.
+
+1. Follow the [Livox official tutorial](https://github.com/Livox-SDK/livox_ros_driver2/blob/master/README.md) to install `livox_ros2_driver` first.
+2. Then, you will need to modify the content in the `point_lio` source code by replacing `livox_ros_driver2::msg::CustomMsg` with `livox_ros2_driver::msg::CustomMsg` and replacing `<livox_ros_driver2/msg/custom_msg.hpp>` with `<livox_ros2_driver/msg/custom_msg.hpp>`.
+
+Connect to your PC to Livox Avia LiDAR by following  [Livox-ros2-driver installation](https://github.com/Livox-SDK/livox_ros2_driver), then
+
+```sh
+    cd ~/$Point_LIO_ROS_DIR$
+    source install/setup.sh
+    ros2 launch point_lio mapping_avia.launch.py
+    ros2 launch livox_ros2_driver livox_lidar_msg_launch.py
+```
+
+### 5.3 For Livox serials with external IMU
 
 mapping_avia.launch theratically supports mid-70, mid-40 or other livox serial LiDAR, but need to setup some parameters befor run:
 
@@ -115,7 +134,7 @@ Edit ``` config/avia.yaml ``` to set the below parameters:
 5. Saturation value of IMU's accelerator and gyroscope: ```satu_acc```, ```satu_gyro```
 6. The norm of IMU's acceleration according to unit of acceleration messages: ``` acc_norm ```
 
-### 5.3 For Velodyne or Ouster (Velodyne as an example)
+### 5.4 For Velodyne or Ouster (Velodyne as an example)
 
 Step A: Setup before run
 
@@ -132,20 +151,22 @@ Edit ``` config/velodyne.yaml ``` to set the below parameters:
 8. The norm of IMU's acceleration according to unit of acceleration messages: ``` acc_norm ```
 
 Step B: Run below
-```
+
+```sh
     cd ~/$Point_LIO_ROS_DIR$
-    source devel/setup.bash
-    roslaunch point_lio mapping_velody16.launch
+    source install/setup.sh
+    ros2 launch point_lio mapping_velody16.launch.py
 ```
 
 Step C: Run LiDAR's ros driver or play rosbag.
 
-### 5.4 PCD file save
+### 5.5 PCD file save
 
 Set ``` pcd_save_enable ``` in launchfile to ``` 1 ```. All the scans (in global frame) will be accumulated and saved to the file ``` Point-LIO/PCD/scans.pcd ``` after the Point-LIO is terminated. ```pcl_viewer scans.pcd``` can visualize the point clouds.
 
 *Tips for pcl_viewer:*
 - change what to visualize/color by pressing keyboard 1,2,3,4,5 when pcl_viewer is running. 
+
 ```
     1 is all random
     2 is X values
