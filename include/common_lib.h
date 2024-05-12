@@ -72,7 +72,7 @@ extern esekfom::esekf<state_output, 30, input_ikfom> kf_output;
 #define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
 
 #define PI_M (3.14159265358)
-#define G_m_s2 (9.81)         // Gravaty const in GuangDong/China
+// #define G_m_s2 (9.81)         // Gravaty const in GuangDong/China
 #define DIM_STATE (24)      // Dimension of states (Let Dim(SO(3)) = 3)
 #define DIM_PROC_N (12)      // Dimension of process noise (Let Dim(SO(3)) = 3)
 #define CUBE_LEN  (6.0)

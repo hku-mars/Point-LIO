@@ -13,7 +13,7 @@
             lidar_type: 1 # 4
             scan_line: 6 # 32
             timestamp_unit: 1           # the unit of time/t field in the PointCloud2 rostopic: 0-second, 1-milisecond, 2-microsecond, 3-nanosecond.
-            blind: 1.0
+            blind: 0.5
 
         mapping:
             imu_en: true
@@ -35,9 +35,9 @@
             plane_thr: 0.1 # 0.05, the threshold for plane criteria, the smaller, the flatter a plane
             match_s: 81.0
             ivox_grid_resolution: 2.0
-            gravity: [ 0.0, 0.0, -9.810 ] # [0.0, 9.810, 0.0] # gravity to be aligned
-            gravity_init: [ 0.0, 0.0, -9.810 ] # [0.0, 9.810, 0.0] # # preknown gravity in the first IMU body frame, use when imu_en is false or start from a non-stationary state
-            extrinsic_T: [ 0.04165, 0.02326, -0.0284 ]
+            gravity: [ 0.0, 0.0, -9.810 ] # [0.0, 9.810, 0.0] # # [0.0, 0.0, -9.787561] # gvins # 
+            gravity_init: [ 0.0, 0.0, -9.810 ] # preknown gravity for unstationary start in the initial IMU frame
+            extrinsic_T: [ 0.04165, 0.02326, -0.0284 ]  # avia # [0.011, 0.02329, -0.04412] # mid360
             extrinsic_R: [ 1.0, 0.0, 0.0,
                            0.0, 1.0, 0.0,
                            0.0, 0.0, 1.0 ]
