@@ -38,7 +38,7 @@ double time_diff_lidar_to_imu = 0.0;
 double lidar_time_inte = 0.1, first_imu_time = 0.0;
 int cut_frame_num = 1, orig_odom_freq = 10;
 double online_refine_time = 20.0; //unit: s
-bool cut_frame_init = true;
+bool cut_frame_init = false; // true;
 
 MeasureGroup Measures;
 

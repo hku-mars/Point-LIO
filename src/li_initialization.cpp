@@ -89,8 +89,11 @@ void standard_pcl_cbk(const sensor_msgs::PointCloud2::ConstPtr &msg)
     }
     else
     { 
-        lidar_buffer.emplace_back(ptr);
-        time_buffer.emplace_back(msg->header.stamp.toSec());
+        if (ptr->points.size() > 0)
+        {
+            lidar_buffer.emplace_back(ptr);
+            time_buffer.emplace_back(msg->header.stamp.toSec());
+        }
     }
     }
     s_plot11[scan_count] = omp_get_wtime() - preprocess_start_time;
@@ -165,8 +168,11 @@ void livox_pcl_cbk(const livox_ros_driver::CustomMsg::ConstPtr &msg)
     }
     else
     {
-        lidar_buffer.emplace_back(ptr);
-        time_buffer.emplace_back(msg->header.stamp.toSec());
+        if (ptr->points.size() > 0)
+        {
+            lidar_buffer.emplace_back(ptr);
+            time_buffer.emplace_back(msg->header.stamp.toSec());
+        }
     }
     }
     s_plot11[scan_count] = omp_get_wtime() - preprocess_start_time;
