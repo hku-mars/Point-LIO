@@ -271,7 +271,7 @@ void set_posestamp(T & out)
 void publish_odometry(const ros::Publisher & pubOdomAftMapped)
 {
     odomAftMapped.header.frame_id = "camera_init";
-    odomAftMapped.child_frame_id = "aft_mapped";
+    odomAftMapped.child_frame_id = "body";
     if (publish_odometry_without_downsample)
     {
         odomAftMapped.header.stamp = ros::Time().fromSec(time_current);
@@ -295,7 +295,7 @@ void publish_odometry(const ros::Publisher & pubOdomAftMapped)
     q.setY(odomAftMapped.pose.pose.orientation.y);
     q.setZ(odomAftMapped.pose.pose.orientation.z);
     transform.setRotation( q );
-    br.sendTransform( tf::StampedTransform( transform, odomAftMapped.header.stamp, "camera_init", "aft_mapped" ) );
+    br.sendTransform( tf::StampedTransform( transform, odomAftMapped.header.stamp, "camera_init", "body") );
 }
 
 void publish_path(const ros::Publisher pubPath)
@@ -380,16 +380,16 @@ int main(int argc, char** argv)
             ("/cloud_registered", 1000);
     ros::Publisher pubLaserCloudFullRes_body = nh.advertise<sensor_msgs::PointCloud2>
             ("/cloud_registered_body", 1000);
-    ros::Publisher pubLaserCloudEffect  = nh.advertise<sensor_msgs::PointCloud2>
-            ("/cloud_effected", 1000);
+    // ros::Publisher pubLaserCloudEffect  = nh.advertise<sensor_msgs::PointCloud2>
+            // ("/cloud_effected", 1000);
     ros::Publisher pubLaserCloudMap = nh.advertise<sensor_msgs::PointCloud2>
             ("/Laser_map", 1000);
     ros::Publisher pubOdomAftMapped = nh.advertise<nav_msgs::Odometry> 
             ("/aft_mapped_to_init", 1000);
     ros::Publisher pubPath          = nh.advertise<nav_msgs::Path> 
             ("/path", 1000);
-    ros::Publisher plane_pub = nh.advertise<visualization_msgs::Marker>
-            ("/planner_normal", 1000);
+    // ros::Publisher plane_pub = nh.advertise<visualization_msgs::Marker>
+            // ("/planner_normal", 1000);
 //------------------------------------------------------------------------------------------------------
     signal(SIGINT, SigHandle);
     ros::Rate loop_rate(500);
