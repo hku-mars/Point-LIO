@@ -75,7 +75,7 @@ extern double time_update_last, time_current, time_predict_last_const, t_last;
 
 extern MeasureGroup Measures;
 
-extern ofstream fout_out, fout_imu_pbp, fout_rtk;
+extern ofstream fout_out, fout_imu_pbp;
 void readParameters(ros::NodeHandle &n);
 void open_file();
 Eigen::Matrix<double, 3, 1> SO3ToEuler(const SO3 &orient);

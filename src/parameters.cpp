@@ -42,7 +42,7 @@ bool cut_frame_init = false; // true;
 
 MeasureGroup Measures;
 
-ofstream fout_out, fout_imu_pbp, fout_rtk;
+ofstream fout_out, fout_imu_pbp;
 
 void readParameters(ros::NodeHandle &nh)
 {
