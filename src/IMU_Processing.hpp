@@ -41,7 +41,7 @@ class ImuProcess
   void Process(const MeasureGroup &meas, PointCloudXYZI::Ptr pcl_un_);
   void Set_init(Eigen::Vector3d &tmp_gravity, Eigen::Matrix3d &rot);
 
-  ofstream fout_imu;
+  // ofstream fout_imu;
   // double first_lidar_time;
   int    lidar_type;
   bool   imu_en;
