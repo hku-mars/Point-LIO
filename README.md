@@ -3,7 +3,6 @@
 # Point-LIO
 ## 1. Introduction
 
-**Please try the new branch 'point-lio-with-grid-map', it solves some implementation problems of the original code, and also supports the simulation dataset with points of a scan collected at the same timestamp.**
 <div align="center">
     <div align="center">
         <img src="https://github.com/hku-mars/Point-LIO/raw/master/image/toc4.png" width = 75% >
