@@ -11,12 +11,11 @@
 </div>
 
 **New features:**
-1. would not fly under degeneration.
-2. high odometry output frequency, 4k-8kHz.
-3. robust to IMU saturation and severe vibration, and other aggressive motions (75 rad/s in our test).
-4. no motion distortion.
-5. computationally efficient, robust, versatile on public datasets with general motions. 
-6. As an odometry, Point-LIO could be used in various autonomous tasks, such as trajectory planning, control, and perception, especially in cases involving very fast ego-motions (e.g., in the presence of severe vibration and high angular or linear velocity) or requiring high-rate odometry output and mapping (e.g., for high-rate feedback control and perception).
+1. high odometry output frequency, 4k-8kHz.
+2. robust to IMU saturation and severe vibration, and other aggressive motions (75 rad/s in our test).
+3. no motion distortion.
+4. computationally efficient, robust, versatile on public datasets with general motions. 
+5. As a LiDAR odometry, Point-LIO could be used in various autonomous tasks, such as trajectory planning, control, and perception, especially in cases involving very fast ego-motions (e.g., in the presence of severe vibration and high angular or linear velocity) or requiring high-rate odometry output and mapping (e.g., for high-rate feedback control and perception).
 
 **Important notes:**
 
