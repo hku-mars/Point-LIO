@@ -1,6 +1,6 @@
 # Point-LIO
 ## Point-LIO: Robust High-Bandwidth Lidar-Inertial Odometry
-# Point-LIO
+
 ## 1. Introduction
 
 <div align="center">
